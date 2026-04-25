@@ -128,3 +128,4 @@ function parseAnalysisResponse(response) {
         questions: `<p><strong>Questions d'entraînement :</strong></p><p>${questions}</p>`
     };
 }
+  
