@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoursClair – Analyse tes cours avec une IA puissante</title>
+    <script src="https://www.paypal.com/sdk/js?client-id=AYTiTe_Og2PPW3tNvpVw20BpCpGv5SHwAMTNmlUBHlvWP5C4UKDTDfVFqAtmunpLLNR1GG7eczOZvc-H&currency=EUR&intent=capture"></script>
+    <style>
+        :root {
+            --primary: #6C5CE7;
+            --secondary: #A29BFE;
+            --light: #F8F9FA;
+            --dark: #2D3436;
+            --success: #00B894;
+            --danger: #E17055;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1.5rem 0;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        nav {
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 0.5rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav ul {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            gap: 1rem;
+        }
+
+        nav ul li a {
+            color: var(--dark);
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .section {
+            padding: 2rem 0;
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 2rem 0;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 2rem;
+        }
+
+        .hero h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .hero p {
+            font-size: 1rem;
+            max-width: 700px;
+            margin: 0 auto 1.5rem;
+            color: #555;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(108, 92, 231, 0.4);
+        }
+
+        .btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .tool-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--box-shadow);
+        }
+
+        .upload-area {
+            border: 3px dashed var(--secondary);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            background-color: rgba(162, 155, 254, 0.05);
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary);
+            background-color: rgba(162, 155, 254, 0.1);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-preview {
+            margin-top: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .file-preview-item {
+            background-color: rgba(108, 92, 231, 0.08);
+            padding: 0.7rem 1rem;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .file-preview-item .remove {
+            margin-left: auto;
+            cursor: pointer;
+            color: var(--danger);
+            font-weight: bold;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 1rem;
+            border: 2px solid #E0E0E0;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        textarea:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #E0E0E0;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            background-color: transparent;
+            border: none;
+            font-size: 1rem;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 1.5rem;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            min-height: 200px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .chat-container {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 1rem;
+            height: 350px;
+            overflow-y: auto;
+            margin: 1.5rem 0;
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            border: 2px solid #E0E0E0;
+            border-radius: 50px;
+            font-size: 1rem;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            padding: 0.8rem 1rem;
+            border-radius: 18px;
+            max-width: 85%;
+            word-wrap: break-word;
+        }
+
+        .user-message {
+            background-color: var(--primary);
+            color: white;
+            margin-left: auto;
+        }
+
+        .bot-message {
+            background-color: #F0F2FF;
+            color: var(--dark);
+            margin-right: auto;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background-color: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            text-align: center;
+        }
+
+        .price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .price span {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        .spinner {
+            border: 4px solid rgba(108, 92, 231, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary);
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 1.5rem auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            color: var(--danger);
+            text-align: center;
+            margin: 1rem 0;
+            font-weight: 600;
+            padding: 0.8rem;
+            background-color: rgba(225, 112, 85, 0.1);
+            border-radius: var(--border-radius);
+        }
+
+        .progress-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin: 1rem 0;
+            display: none;
+        }
+
+        .progress-bar {
+            width: 200px;
+            height: 6px;
+            background-color: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .btn-cancel {
+            background-color: #f0f0f0;
+            color: var(--dark);
+            border: 1px solid #ddd;
+        }
+
+        .btn-cancel:hover {
+            background-color: #e0e0e0;
+        }
+
+        footer {
+            background-color: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+            .tabs {
+                flex-direction: row;
+                overflow-x: auto;
+            }
+            .tab {
+                flex: 1;
+                text-align: center;
+                white-space: nowrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">📚 CoursClair</div>
+            <nav>
+                <ul>
+                    <li><a onclick="showTab('home')">Accueil</a></li>
+                    <li><a onclick="showTab('tool')">Outil</a></li>
+                    <li><a onclick="showTab('pricing')">Tarifs</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section id="home" class="section active">
+            <div class="container">
+                <div class="hero">
+                    <h1>Comprends tes cours avec <span style="color: var(--secondary);">CoursClair</span></h1>
+                    <p>Uploade tes fichiers (PDF, images, texte) ou colle ton cours. Notre IA explique tout, résume, donne des exemples et génère des questions pour t'entraîner.</p>
+                    <button class="btn btn-primary" onclick="showTab('tool')">Essayer gratuitement</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="tool" class="section">
+            <div class="container">
+                <div class="tool-container">
+                    <h2 style="text-align: center; margin-bottom: 1.5rem; color: var(--primary);">Analyse ton cours</h2>
+                    <p id="limit-message" style="text-align: center; margin-bottom: 1rem; font-weight: 600;"></p>
+                    <p id="error-message" class="error-message" style="display: none;"></p>
+
+                    <div class="upload-area" id="upload-area">
+                        <p style="font-size: 2.5rem; margin-bottom: 1rem;">📁</p>
+                        <p><strong>Glisse-dépose tes fichiers ici</strong></p>
+                        <p style="font-size: 0.9rem; color: #666;">(PDF, TXT, JPG, PNG - Max 100 Mo)</p>
+                        <input type="file" id="file-input" class="file-input" accept=".pdf,.txt,.jpg,.jpeg,.png" multiple>
+                    </div>
+                    <div class="file-preview" id="file-preview"></div>
+
+                    <p style="margin: 1.5rem 0; text-align: center;">OU</p>
+                    <textarea id="course-text" placeholder="Colle ton cours ici..."></textarea>
+
+                    <div style="text-align: center; margin: 2rem 0;">
+                        <div style="display: flex; justify-content: center; gap: 1rem;">
+                            <button id="analyze-button" class="btn btn-primary" onclick="startAnalysis()">
+                                🔍 Analyser le cours
+                            </button>
+                            <button id="cancel-button" class="btn btn-cancel" onclick="cancelAnalysis()" style="display: none;">
+                                ❌ Annuler
+                            </button>
+                        </div>
+                        <div class="progress-container" id="progress-container">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progress-fill"></div>
+                            </div>
+                            <span id="progress-text">0%</span>
+                        </div>
+                    </div>
+
+                    <div id="loading-spinner" class="spinner" style="display: none;"></div>
+
+                    <div class="tabs">
+                        <button class="tab active" onclick="showResultTab('explanation')">Explication</button>
+                        <button class="tab" onclick="showResultTab('summary')">Résumé</button>
+                        <button class="tab" onclick="showResultTab('examples')">Exemples</button>
+                        <button class="tab" onclick="showResultTab('questions')">Questions</button>
+                    </div>
+
+                    <div id="explanation" class="tab-content active">
+                        <p id="explanation-result">Ton explication apparaîtra ici après analyse.</p>
+                    </div>
+                    <div id="summary" class="tab-content">
+                        <p id="summary-result">Ton résumé apparaîtra ici après analyse.</p>
+                    </div>
+                    <div id="examples" class="tab-content">
+                        <p id="examples-result">Tes exemples apparaîtont ici après analyse.</p>
+                    </div>
+                    <div id="questions" class="tab-content">
+                        <p id="questions-result">Tes questions d'entraînement apparaîtont ici après analyse.</p>
+                    </div>
+
+                    <div style="margin-top: 2rem;">
+                        <h3 style="margin-bottom: 1rem; color: var(--primary); text-align: center;">Pose-moi une question sur ton cours</h3>
+                        <div class="chat-container" id="chat-messages">
+                            <div class="message bot-message">Bonjour ! Je suis ton assistant IA avancé. Uploade ou colle ton cours, puis pose-moi n'importe quelle question. Je peux tout expliquer ! 😊</div>
+                        </div>
+                        <div class="chat-input">
+                            <input type="text" id="chat-input" placeholder="Ex: Explique-moi la photosynthèse en détail...">
+                            <button class="btn btn-primary" onclick="sendChatMessage()">Envoyer</button>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 2rem;">
+                        <button class="btn btn-secondary" onclick="showTab('pricing')" style="background: white; color: var(--primary); border: 2px solid var(--primary);">Déverrouiller l'accès illimité</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="pricing" class="section">
+            <div class="container">
+                <h2 style="text-align: center; margin-bottom: 2rem; color: var(--primary);">Nos tarifs</h2>
+                <div class="pricing-grid">
+                    <div class="pricing-card">
+                        <h3>Accès 1 mois</h3>
+                        <div class="price">8 <span>€</span></div>
+                        <p>Paiement unique pour 1 mois d'accès illimité</p>
+                        <div id="paypal-button-monthly"></div>
+                    </div>
+                    <div class="pricing-card">
+                        <h3>Accès 1 an</h3>
+                        <div class="price">60 <span>€</span></div>
+                        <p>Paiement unique pour 1 an d'accès illimité</p>
+                        <div id="paypal-button-yearly"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 CoursClair. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script>
+        // ========== VARIABLES GLOBALES ==========
+        let uploadedFiles = [];
+        let currentText = "";
+        let isProcessing = false;
+        let analysisInProgress = false;
+        let analysisTimeout = null;
+        let currentCourseText = "";
+
+        // ========== AU CHARGEMENT DE LA PAGE ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!getCookie("coursclair_free_uses")) {
+                setCookie("coursclair_free_uses", 2, 30);
+            }
+
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('paid') && urlParams.get('paid') === 'true') {
+                const days = parseInt(urlParams.get('days')) || 365;
+                setPaidUser(days);
+                showTab('tool');
+                window.history.replaceState({}, document.title, window.location.pathname);
+                showError('✅ Paiement réussi ! Accès illimité activé.');
+            }
+
+            showTab('home');
+            setupEventListeners();
+        });
+
+        // ========== CONFIGURATION DES ÉVÉNEMENTS ==========
+        function setupEventListeners() {
+            const uploadArea = document.getElementById('upload-area');
+            const fileInput = document.getElementById('file-input');
+
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                if (e.dataTransfer.files.length) {
+                    handleFiles(e.dataTransfer.files);
+                }
+            });
+
+            uploadArea.addEventListener('click', () => {
+                fileInput.click();
+            });
+
+            fileInput.addEventListener('change', () => {
+                if (fileInput.files.length) {
+                    handleFiles(fileInput.files);
+                }
+            });
+
+            document.getElementById("chat-input").addEventListener("keypress", function(e) {
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    sendChatMessage();
+                }
+            });
+        }
+
+        // ========== GESTION DES COOKIES ==========
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
+
+        function setCookie(name, value, days) {
+            const date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            document.cookie = `${name}=${value}; expires=${date.toUTCString()}; path=/; SameSite=Lax`;
+        }
+
+        // ========== GESTION DES UTILISATIONS GRATUITES ==========
+        function checkFreeUses() {
+            const freeUses = parseInt(getCookie("coursclair_free_uses")) || 0;
+            const limitMessage = document.getElementById("limit-message");
+            const analyzeButton = document.getElementById("analyze-button");
+
+            if (isPaidUser()) {
+                analyzeButton.disabled = false;
+                limitMessage.innerHTML = '<span style="color: #00B894;">✓ Accès illimité activé !</span>';
+            } else if (freeUses <= 0) {
+                analyzeButton.disabled = true;
+                limitMessage.innerHTML = '<span style="color: #E17055;">⚠️ Tu as utilisé tes 2 analyses gratuites. <a href="#" onclick="showTab(\'pricing\')" style="color: #6C5CE7; text-decoration: underline;">Déverrouille l\'accès</a> !</span>';
+            } else {
+                analyzeButton.disabled = false;
+                limitMessage.innerHTML = `✓ Il te reste <strong>${freeUses}</strong> analyse(s) gratuite(s).`;
+            }
+        }
+
+        function useFreeAnalysis() {
+            if (isPaidUser()) return;
+            let freeUses = parseInt(getCookie("coursclair_free_uses")) || 2;
+            if (freeUses > 0) {
+                freeUses--;
+                setCookie("coursclair_free_uses", freeUses, 30);
+                checkFreeUses();
+            }
+        }
+
+        // ========== GESTION DES UTILISATEURS PAYANTS ==========
+        function isPaidUser() {
+            const paid = getCookie("coursclair_paid") === "true";
+            const expiry = getCookie("coursclair_expiry");
+            if (!paid || !expiry) return false;
+
+            const expiryDate = new Date(expiry);
+            if (expiryDate < new Date()) {
+                setCookie("coursclair_paid", "false", -1);
+                setCookie("coursclair_expiry", "", -1);
+                return false;
+            }
+            return true;
+        }
+
+        function setPaidUser(days) {
+            setCookie("coursclair_paid", "true", days);
+            const expiryDate = new Date();
+            expiryDate.setDate(expiryDate.getDate() + days);
+            setCookie("coursclair_expiry", expiryDate.toISOString(), days);
+        }
+
+        // ========== GESTION DES ONGLETS ==========
+        function showTab(tabId) {
+            const currentSection = document.querySelector('.section.active');
+            if (currentSection && currentSection.id === tabId) return;
+
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            document.getElementById(tabId).classList.add('active');
+
+            if (tabId === 'pricing' && !window.paypal) {
+                loadPayPalSDK();
+            }
+
+            if (tabId === 'tool') {
+                checkFreeUses();
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showResultTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // ========== GESTION DES FICHIERS ==========
+        function handleFiles(files) {
+            const errorMessage = document.getElementById('error-message');
+            errorMessage.style.display = 'none';
+
+            for (let file of files) {
+                if (file.type === '' || file.type === 'application/x-directory') {
+                    showError("❌ Les dossiers ne sont pas supportés. Veuillez uploader des fichiers (PDF, TXT, JPG, PNG).");
+                    return;
+                }
+            }
+
+            const maxSize = 100 * 1024 * 1024;
+            const allowedTypes = ['application/pdf', 'text/plain', 'image/jpeg', 'image/png', 'image/jpg'];
+
+            for (let file of files) {
+                if (file.size > maxSize) {
+                    showError(`❌ Le fichier <strong>${file.name}</strong> est trop grand (max 100 Mo).`);
+                    return;
+                }
+                if (!allowedTypes.includes(file.type) && !file.name.endsWith('.txt')) {
+                    showError(`❌ Type de fichier non autorisé : <strong>${file.name}</strong>. (PDF, TXT, JPG, PNG uniquement)`);
+                    return;
+                }
+            }
+
+            uploadedFiles = Array.from(files);
+            displayFilePreview();
+
+            if (uploadedFiles.length === 1) {
+                showError(`✅ Fichier "${uploadedFiles[0].name}" prêt. Cliquez sur "Analyser le cours".`);
+            } else {
+                showError(`✅ ${uploadedFiles.length} fichiers prêts. Cliquez sur "Analyser le cours".`);
+            }
+        }
+
+        function displayFilePreview() {
+            const filePreview = document.getElementById('file-preview');
+            filePreview.innerHTML = '';
+            uploadedFiles.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-preview-item';
+
+                let icon = '📄';
+                if (file.type.startsWith('image/')) icon = '🖼️';
+                else if (file.name.endsWith('.pdf')) icon = '📕';
+
+                fileItem.innerHTML = `
+                    ${icon} <strong>${file.name}</strong> (${formatFileSize(file.size)})
+                    <span class="remove" onclick="removeFile(${index})" title="Supprimer">✕</span>
+                `;
+                filePreview.appendChild(fileItem);
+            });
+        }
+
+        function removeFile(index) {
+            uploadedFiles.splice(index, 1);
+            displayFilePreview();
+            if (uploadedFiles.length === 0) {
+                document.getElementById('course-text').value = currentText;
+            }
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' octets';
+            else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' Ko';
+            else return (bytes / 1048576).toFixed(1) + ' Mo';
+        }
+
+        function showError(message) {
+            const errorElement = document.getElementById('error-message');
+            errorElement.innerHTML = message;
+            errorElement.style.display = 'block';
+        }
+
+        // ========== FONCTION PRINCIPALE POUR ANALYSER ==========
+        async function startAnalysis() {
+            if (analysisInProgress) {
+                showError("⏳ Une analyse est déjà en cours. Veuillez patienter ou cliquer sur 'Annuler'.");
+                return;
+            }
+
+            analysisInProgress = true;
+            const analyzeButton = document.getElementById('analyze-button');
+            const cancelButton = document.getElementById('cancel-button');
+            const progressContainer = document.getElementById('progress-container');
+            const progressFill = document.getElementById('progress-fill');
+            const progressText = document.getElementById('progress-text');
+
+            analyzeButton.disabled = true;
+            cancelButton.style.display = 'inline-flex';
+            progressContainer.style.display = 'flex';
+            progressFill.style.width = '0%';
+            progressText.textContent = '0%';
+
+            analysisTimeout = setTimeout(() => {
+                cancelAnalysis();
+                showError("❌ L'analyse prend trop de temps. Veuillez réessayer avec un fichier plus petit ou un texte plus court.");
+            }, 30000);
+
+            try {
+                const textArea = document.getElementById("course-text");
+                const userText = textArea.value.trim();
+
+                if (userText) {
+                    currentCourseText = userText;
+                    await runAnalysisSteps(userText);
+                    return;
+                }
+
+                if (uploadedFiles.length > 0) {
+                    if (uploadedFiles.length === 1) {
+                        updateProgress(50, "Extraction du texte...");
+                        await extractTextFromFile(uploadedFiles[0]);
+                        if (analysisInProgress) {
+                            currentCourseText = textArea.value;
+                            await runAnalysisSteps(textArea.value);
+                        }
+                        return;
+                    } else {
+                        updateProgress(50, "Fusion des fichiers...");
+                        await processMultipleFiles();
+                        if (analysisInProgress) {
+                            currentCourseText = textArea.value;
+                            await runAnalysisSteps(textArea.value);
+                        }
+                        return;
+                    }
+                }
+
+                showError("❌ Veuillez coller un texte ou uploader au moins un fichier.");
+            } catch (error) {
+                console.error("Erreur dans startAnalysis:", error);
+                showError(`❌ Une erreur est survenue: ${error.message}`);
+            } finally {
+                cleanupAnalysis();
+            }
+        }
+
+        async function runAnalysisSteps(text) {
+            try {
+                updateProgress(75, "Analyse en cours...");
+
+                if (!isPaidUser()) {
+                    const freeUses = parseInt(getCookie("coursclair_free_uses")) || 0;
+                    if (freeUses <= 0) {
+                        showError("❌ Tu as utilisé tes 2 analyses gratuites. <a href='#' onclick='showTab(\"pricing\")' style='color: #6C5CE7; text-decoration: underline;'>Déverrouille l'accès</a> !");
+                        cleanupAnalysis();
+                        return;
+                    }
+                    useFreeAnalysis();
+                }
+
+                updateProgress(90, "Génération des résultats...");
+                await analyzeCourse(text);
+            } catch (error) {
+                console.error("Erreur dans runAnalysisSteps:", error);
+                showError(`❌ Erreur lors de l'analyse: ${error.message}`);
+                cleanupAnalysis();
+            }
+        }
+
+        function updateProgress(percentage, message) {
+            const progressFill = document.getElementById('progress-fill');
+            const progressText = document.getElementById('progress-text');
+            progressFill.style.width = `${percentage}%`;
+            progressText.textContent = `${percentage}% - ${message}`;
+        }
+
+        function cleanupAnalysis() {
+            clearTimeout(analysisTimeout);
+            analysisInProgress = false;
+
+            const analyzeButton = document.getElementById('analyze-button');
+            const cancelButton = document.getElementById('cancel-button');
+            const progressContainer = document.getElementById('progress-container');
+            const loadingSpinner = document.getElementById('loading-spinner');
+
+            analyzeButton.disabled = false;
+            cancelButton.style.display = 'none';
+            progressContainer.style.display = 'none';
+            loadingSpinner.style.display = 'none';
+        }
+
+        function cancelAnalysis() {
+            if (!analysisInProgress) return;
+            cleanupAnalysis();
+            showError("❌ Analyse annulée.");
+        }
+
+        // ========== EXTRACTION DE TEXTE ==========
+        async function extractTextFromFile(file) {
+            if (isProcessing) return;
+            isProcessing = true;
+
+            const textArea = document.getElementById('course-text');
+            currentText = textArea.value;
+            textArea.value = "⏳ Extraction du texte en cours...";
+            document.getElementById('loading-spinner').style.display = 'block';
+            errorMessage.style.display = 'none';
+
+            try {
+                if (file.type.startsWith('image/')) {
+                    await extractTextFromImage(file);
+                } else if (file.name.endsWith('.pdf')) {
+                    await extractTextFromPDF(file);
+                } else if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
+                    await extractTextFromTextFile(file);
+                }
+                showError('✅ Texte extrait ! Cliquez sur "Analyser le cours".');
+            } catch (error) {
+                console.error("Erreur d'extraction :", error);
+                textArea.value = currentText;
+                showError(`❌ Erreur d'extraction : ${error.message}`);
+                cleanupAnalysis();
+            } finally {
+                isProcessing = false;
+                document.getElementById('loading-spinner').style.display = 'none';
+            }
+        }
+
+        async function processMultipleFiles() {
+            const textArea = document.getElementById('course-text');
+            textArea.value = "⏳ Fusion des fichiers en cours...";
+            document.getElementById('loading-spinner').style.display = 'block';
+            errorMessage.style.display = 'none';
+
+            let combinedText = "";
+
+            try {
+                for (const file of uploadedFiles) {
+                    const text = await extractTextFromSingleFile(file);
+                    combinedText += `\n\n--- Fichier: ${file.name} ---\n\n${text}\n\n`;
+                }
+
+                textArea.value = combinedText.trim();
+                currentText = combinedText.trim();
+                showError('✅ Tous les fichiers ont été fusionnés ! Cliquez à nouveau sur "Analyser le cours".');
+            } catch (error) {
+                console.error("Erreur lors de la fusion des fichiers :", error);
+                textArea.value = currentText;
+                showError(`❌ Erreur lors de la fusion : ${error.message}`);
+                cleanupAnalysis();
+            } finally {
+                document.getElementById('loading-spinner').style.display = 'none';
+            }
+        }
+
+        async function extractTextFromSingleFile(file) {
+            if (file.type.startsWith('image/')) {
+                return await extractTextFromImage(file);
+            } else if (file.name.endsWith('.pdf')) {
+                return await extractTextFromPDF(file);
+            } else if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
+                return await extractTextFromTextFile(file);
+            } else {
+                throw new Error(`Type de fichier non supporté : ${file.type}`);
+            }
+        }
+
+        async function extractTextFromImage(file) {
+            const textArea = document.getElementById('course-text');
+            try {
+                if (!window.Tesseract) {
+                    await loadTesseract();
+                }
+
+                const tesseractTimeout = setTimeout(() => {
+                    throw new Error("Extraction OCR trop longue. Essayez avec une image plus petite ou plus claire.");
+                }, 20000);
+
+                const { data: { text } } = await window.Tesseract.recognize(
+                    file,
+                    'fra+eng',
+                    {
+                        tessedit_char_whitelist: '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZàâäéèêëîïôöùûüçÿœæÀÂÄÉÈÊËÎÏÔÖÙÛÜÇŸŒÆ.,;:!?\'"-()[]{}',
+                        preserve_interword_spaces: '1',
+                    }
+                );
+
+                clearTimeout(tesseractTimeout);
+                textArea.value = text.trim();
+                currentText = text.trim();
+            } catch (error) {
+                console.error("Erreur OCR :", error);
+                textArea.value = currentText;
+                throw error;
+            }
+        }
+
+        async function extractTextFromPDF(file) {
+            const textArea = document.getElementById('course-text');
+            try {
+                if (!window.pdfjsLib) {
+                    await loadPDFJS();
+                }
+
+                const pdfTimeout = setTimeout(() => {
+                    throw new Error("Extraction PDF trop longue. Essayez avec un fichier plus petit.");
+                }, 20000);
+
+                window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js';
+                const fileURL = URL.createObjectURL(file);
+                const pdf = await window.pdfjsLib.getDocument(fileURL).promise;
+                let fullText = '';
+
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const textContent = await page.getTextContent();
+                    const text = textContent.items.map(item => item.str).join(' ');
+                    fullText += text + '\n';
+                }
+
+                clearTimeout(pdfTimeout);
+                textArea.value = fullText.trim();
+                currentText = fullText.trim();
+                URL.revokeObjectURL(fileURL);
+            } catch (error) {
+                console.error("Erreur PDF :", error);
+                textArea.value = currentText;
+                throw error;
+            }
+        }
+
+        async function extractTextFromTextFile(file) {
+            const textArea = document.getElementById('course-text');
+            try {
+                const text = await file.text();
+                textArea.value = text.trim();
+                currentText = text.trim();
+            } catch (error) {
+                console.error("Erreur fichier texte :", error);
+                textArea.value = currentText;
+                throw error;
+            }
+        }
+
+        // ========== CHARGEMENT DYNAMIQUE DES BIBLIOTHÈQUES ==========
+        function loadTesseract() {
+            return new Promise((resolve, reject) => {
+                if (window.Tesseract) {
+                    resolve();
+                    return;
+                }
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js';
+                script.onload = resolve;
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
+        }
+
+        function loadPDFJS() {
+            return new Promise((resolve, reject) => {
+                if (window.pdfjsLib) {
+                    resolve();
+                    return;
+                }
+                const script = document.createElement('script');
+                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js';
+                script.onload = resolve;
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
+        }
+
+        // ========== FONCTION D'ANALYSE (appel à l'API backend) ==========
+        async function analyzeCourse(text) {
+            const textArea = document.getElementById("course-text");
+            const userText = text || textArea.value.trim();
+
+            if (!userText) {
+                showError("❌ Veuillez coller un texte ou uploader un fichier.");
+                cleanupAnalysis();
+                return;
+            }
+
+            document.getElementById("loading-spinner").style.display = "block";
+            errorMessage.style.display = 'none';
+
+            try {
+                // Appel à l'API backend (Serverless Function)
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        text: userText,
+                        action: 'analyze'
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Erreur API: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+
+                // Afficher les résultats
+                document.getElementById("explanation-result").innerHTML = data.explanation;
+                document.getElementById("summary-result").innerHTML = data.summary;
+                document.getElementById("examples-result").innerHTML = data.examples;
+                document.getElementById("questions-result").innerHTML = data.questions;
+
+                showResultTab('explanation');
+                showError('✅ Analyse terminée ! Consulte les résultats.');
+            } catch (error) {
+                console.error("Erreur d'analyse :", error);
+                showError(`❌ Erreur : ${error.message}. Veuillez réessayer.`);
+            } finally {
+                document.getElementById("loading-spinner").style.display = "none";
+                cleanupAnalysis();
+            }
+        }
+
+        // ========== CHATBOT (appel à l'API backend) ==========
+        async function sendChatMessage() {
+            const input = document.getElementById("chat-input");
+            const message = input.value.trim();
+            if (!message) return;
+
+            const chatMessages = document.getElementById("chat-messages");
+            chatMessages.innerHTML += `<div class="message user-message">${message}</div>`;
+            input.value = "";
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            try {
+                // Appel à l'API backend pour le chatbot
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        text: currentCourseText,
+                        question: message,
+                        action: 'chat'
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Erreur API: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                chatMessages.innerHTML += `<div class="message bot-message">${data.response}</div>`;
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            } catch (error) {
+                console.error("Erreur chatbot :", error);
+                chatMessages.innerHTML += `<div class="message bot-message">Désolé, une erreur est survenue. Veuillez réessayer.</div>`;
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        }
+
+        // ========== PAYPAL ==========
+        function loadPayPalSDK() {
+            if (window.paypal) return;
+
+            const script = document.createElement('script');
+            script.src = 'https://www.paypal.com/sdk/js?client-id=AYTiTe_Og2PPW3tNvpVw20BpCpGv5SHwAMTNmlUBHlvWP5C4UKDTDfVFqAtmunpLLNR1GG7eczOZvc-H&currency=EUR&intent=capture';
+            script.onload = initPayPalButtons;
+            script.onerror = () => {
+                console.error('❌ Échec du chargement de PayPal SDK');
+                showError('❌ Erreur de chargement du système de paiement.');
+            };
+            document.head.appendChild(script);
+        }
+
+        function initPayPalButtons() {
+            window.paypal.Buttons({
+                style: { layout: 'vertical', color: 'gold', shape: 'rect', label: 'paypal' },
+                createOrder: function(data, actions) {
+                    return actions.order.create({
+                        purchase_units: [{
+                            amount: { value: '8.00', currency_code: 'EUR' },
+                            description: 'Accès illimité à CoursClair - 1 mois'
+                        }]
+                    });
+                },
+                onApprove: function(data, actions) {
+                    return actions.order.capture().then(function(details) {
+                        setPaidUser(30);
+                        showTab('tool');
+                        showError('✅ Paiement réussi ! Accès illimité activé pour 1 mois.');
+                    });
+                },
+                onCancel: function(data) {
+                    showError('⚠️ Paiement annulé.');
+                },
+                onError: function(err) {
+                    console.error("❌ Erreur PayPal :", err);
+                    showError('❌ Erreur de paiement. Veuillez réessayer.');
+                }
+            }).render('#paypal-button-monthly');
+
+            window.paypal.Buttons({
+                style: { layout: 'vertical', color: 'gold', shape: 'rect', label: 'paypal' },
+                createOrder: function(data, actions) {
+                    return actions.order.create({
+                        purchase_units: [{
+                            amount: { value: '60.00', currency_code: 'EUR' },
+                            description: 'Accès illimité à CoursClair - 1 an'
+                        }]
+                    });
+                },
+                onApprove: function(data, actions) {
+                    return actions.order.capture().then(function(details) {
+                        setPaidUser(365);
+                        showTab('tool');
+                        showError('✅ Paiement réussi ! Accès illimité activé pour 1 an.');
+                    });
+                },
+                onCancel: function(data) {
+                    showError('⚠️ Paiement annulé.');
+                },
+                onError: function(err) {
+                    console.error("❌ Erreur PayPal :", err);
+                    showError('❌ Erreur de paiement. Veuillez réessayer.');
+                }
+            }).render('#paypal-button-yearly');
+        }
+    </script>
+</body>
+</html>
