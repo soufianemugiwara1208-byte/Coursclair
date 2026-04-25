@@ -1,4 +1,4 @@
-// api/chat.js - Serverless Function pour Vercel
+// api/chat.js - Serverless Function pour Vercel avec appel direct à l'API Groq
 export default async function handler(req, res) {
     // Vérifier que la requête est de type POST
     if (req.method !== 'POST') {
@@ -16,19 +16,17 @@ export default async function handler(req, res) {
 
         // Appeler l'API Groq en fonction de l'action
         if (action === 'analyze') {
-            // Appel à Groq pour analyser le texte
-            const analysisResponse = await callGroqAPI(
-                `Tu es un professeur patient et pédagogue. Analyse ce texte et génère :
-                1. Une explication simple et détaillée (en français)
-                2. Un résumé clair (en français)
-                3. 3 exemples concrets (en français)
-                4. 5 questions d'entraînement (2 QCM, 2 questions ouvertes, 1 question de synthèse) (en français)
+            // Prompt pour l'analyse du cours
+            const prompt = `Tu es un professeur patient et pédagogue. Analyse ce texte et génère :
+            1. Une explication simple et détaillée (en français)
+            2. Un résumé clair (en français)
+            3. 3 exemples concrets (en français)
+            4. 5 questions d'entraînement (2 QCM, 2 questions ouvertes, 1 question de synthèse) (en français)
 
-                Texte à analyser : ${text}`
-            );
+            Texte à analyser : ${text}`;
 
-            // Parser la réponse pour extraire les différentes parties
-            const { explanation, summary, examples, questions } = parseAnalysisResponse(analysisResponse);
+            const response = await callGroqAPI(prompt);
+            const { explanation, summary, examples, questions } = parseAnalysisResponse(response);
 
             return res.status(200).json({
                 explanation,
@@ -38,15 +36,14 @@ export default async function handler(req, res) {
             });
 
         } else if (action === 'chat') {
-            // Appel à Groq pour répondre à une question
-            const chatResponse = await callGroqAPI(
-                `Tu es un assistant IA spécialisé dans l'aide aux devoirs. Réponds à cette question en français, de manière claire, détaillée et adaptée à un étudiant.
-                Contexte : ${text || 'Aucun contexte spécifique'}
-                Question : ${question}`
-            );
+            // Prompt pour le chatbot
+            const prompt = `Tu es un assistant IA spécialisé dans l'aide aux devoirs. Réponds à cette question en français, de manière claire, détaillée et adaptée à un étudiant.
+            Contexte : ${text || 'Aucun contexte spécifique'}
+            Question : ${question}`;
 
+            const response = await callGroqAPI(prompt);
             return res.status(200).json({
-                response: chatResponse
+                response: response
             });
         } else {
             return res.status(400).json({ error: 'Invalid action' });
@@ -54,11 +51,11 @@ export default async function handler(req, res) {
 
     } catch (error) {
         console.error('Erreur dans api/chat:', error);
-        return res.status(500).json({ error: 'Internal server error' });
+        return res.status(500).json({ error: 'Internal server error', details: error.message });
     }
 }
 
-// Fonction pour appeler l'API Groq
+// Fonction pour appeler l'API Groq (endpoint direct)
 async function callGroqAPI(prompt) {
     const apiKey = process.env.GROQ_API_KEY;
     const apiUrl = 'https://api.groq.com/openai/v1/chat/completions';
@@ -70,15 +67,16 @@ async function callGroqAPI(prompt) {
             'Authorization': `Bearer ${apiKey}`
         },
         body: JSON.stringify({
-            model: "mixtral-8x7b-32768",
+            model: "mixtral-8x7b-32768", // Modèle puissant et rapide
             messages: [
                 {
                     role: "user",
                     content: prompt
                 }
             ],
-            temperature: 0.7,
-            max_tokens: 2000
+            temperature: 0.7, // Créativité modérée
+            max_tokens: 2000, // Longueur maximale de la réponse
+            stream: false // Désactive le streaming pour simplifier
         })
     });
 
@@ -116,7 +114,6 @@ function parseAnalysisResponse(response) {
 
     // Si le parsing automatique échoue, utiliser des valeurs par défaut
     if (!explanation || !summary || !examples || !questions) {
-        // Diviser la réponse en 4 parties égales
         const parts = response.split('\n\n').filter(part => part.trim().length > 0);
         explanation = parts[0] || "Explication non disponible";
         summary = parts[1] || "Résumé non disponible";
