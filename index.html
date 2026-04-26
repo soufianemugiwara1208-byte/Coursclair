@@ -3,1212 +3,597 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CoursClair – Analyse tes cours avec une IA puissante</title>
+    <title>CoursClair – L'IA qui t'aide à comprendre tes cours</title>
+    <meta name="description" content="CoursClair analyse tes cours avec l'IA : explications claires, résumés, exemples concrets et questions d'entraînement. Idéal pour les étudiants.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://www.paypal.com/sdk/js?client-id=AYTiTe_Og2PPW3tNvpVw20BpCpGv5SHwAMTNmlUBHlvWP5C4UKDTDfVFqAtmunpLLNR1GG7eczOZvc-H&currency=EUR&intent=capture"></script>
     <style>
         :root {
-            --primary: #6C5CE7;
-            --secondary: #A29BFE;
-            --light: #F8F9FA;
-            --dark: #2D3436;
-            --success: #00B894;
-            --danger: #E17055;
-            --border-radius: 12px;
-            --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --cream: #F5F0E8;
+            --cream-dark: #EDE7D9;
+            --ink: #1A1A1A;
+            --ink-light: #4A4A4A;
+            --emerald: #0D6E5A;
+            --emerald-light: #12917A;
+            --emerald-pale: #E8F4F1;
+            --gold: #C9A84C;
+            --white: #FFFFFF;
+            --border: rgba(26,26,26,0.12);
+            --radius: 4px;
+            --radius-lg: 12px;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
         body {
-            background-color: var(--light);
-            color: var(--dark);
+            background: var(--cream);
+            color: var(--ink);
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 400;
             line-height: 1.6;
+            overflow-x: hidden;
         }
-
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 0 1rem;
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.4;
         }
-
-        header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            padding: 1.5rem 0;
-            text-align: center;
-        }
-
-        .logo {
-            font-size: 1.8rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-        }
-
+        h1, h2, h3 { font-family: 'Playfair Display', serif; line-height: 1.15; }
         nav {
-            background-color: white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            padding: 0.5rem 0;
-            position: sticky;
-            top: 0;
+            position: fixed;
+            top: 0; left: 0; right: 0;
             z-index: 100;
-        }
-
-        nav ul {
-            display: flex;
-            justify-content: center;
-            list-style: none;
-            gap: 1rem;
-        }
-
-        nav ul li a {
-            color: var(--dark);
-            font-weight: 500;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .section {
-            padding: 2rem 0;
-            display: none;
-        }
-
-        .section.active {
-            display: block;
-        }
-
-        .hero {
-            text-align: center;
-            padding: 2rem 0;
-            background-color: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            margin-bottom: 2rem;
-        }
-
-        .hero h1 {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-            color: var(--dark);
-        }
-
-        .hero p {
-            font-size: 1rem;
-            max-width: 700px;
-            margin: 0 auto 1.5rem;
-            color: #555;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 0.8rem 1.5rem;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.3s;
-            border: none;
-            cursor: pointer;
-            text-decoration: none;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
-        }
-
-        .btn-primary:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(108, 92, 231, 0.4);
-        }
-
-        .btn:disabled {
-            background: #cccccc;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .tool-container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: white;
-            border-radius: var(--border-radius);
-            padding: 2rem;
-            box-shadow: var(--box-shadow);
-        }
-
-        .upload-area {
-            border: 3px dashed var(--secondary);
-            border-radius: var(--border-radius);
-            padding: 2rem;
-            text-align: center;
-            margin-bottom: 1.5rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            background-color: rgba(162, 155, 254, 0.05);
-        }
-
-        .upload-area:hover {
-            border-color: var(--primary);
-            background-color: rgba(162, 155, 254, 0.1);
-        }
-
-        .file-input {
-            display: none;
-        }
-
-        .file-preview {
-            margin-top: 1rem;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .file-preview-item {
-            background-color: rgba(108, 92, 231, 0.08);
-            padding: 0.7rem 1rem;
-            border-radius: 20px;
+            background: rgba(245, 240, 232, 0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            height: 64px;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            justify-content: space-between;
         }
-
-        .file-preview-item .remove {
-            margin-left: auto;
-            cursor: pointer;
-            color: var(--danger);
-            font-weight: bold;
-        }
-
-        textarea {
-            width: 100%;
-            min-height: 150px;
-            padding: 1rem;
-            border: 2px solid #E0E0E0;
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            margin-bottom: 1.5rem;
-            resize: vertical;
-            font-family: inherit;
-        }
-
-        textarea:focus {
-            border-color: var(--primary);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
-        }
-
-        .tabs {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 1rem;
-            border-bottom: 2px solid #E0E0E0;
-            flex-wrap: wrap;
-        }
-
-        .tab {
-            padding: 0.8rem 1.5rem;
-            cursor: pointer;
-            background-color: transparent;
-            border: none;
-            font-size: 1rem;
-            color: #666;
-            transition: all 0.3s;
-        }
-
-        .tab.active {
-            color: var(--primary);
-            border-bottom: 3px solid var(--primary);
-            font-weight: 600;
-        }
-
-        .tab-content {
-            display: none;
-            padding: 1.5rem;
-            background-color: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            min-height: 200px;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .chat-container {
-            background-color: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            padding: 1rem;
-            height: 350px;
-            overflow-y: auto;
-            margin: 1.5rem 0;
-        }
-
-        .chat-input {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .chat-input input {
-            flex: 1;
-            padding: 0.8rem 1rem;
-            border: 2px solid #E0E0E0;
-            border-radius: 50px;
-            font-size: 1rem;
-        }
-
-        .message {
-            margin-bottom: 1rem;
-            padding: 0.8rem 1rem;
-            border-radius: 18px;
-            max-width: 85%;
-            word-wrap: break-word;
-        }
-
-        .user-message {
-            background-color: var(--primary);
-            color: white;
-            margin-left: auto;
-        }
-
-        .bot-message {
-            background-color: #F0F2FF;
-            color: var(--dark);
-            margin-right: auto;
-        }
-
-        .pricing-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .pricing-card {
-            background-color: white;
-            padding: 2rem;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            text-align: center;
-        }
-
-        .price {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .price span {
-            font-size: 1rem;
-            color: #666;
-        }
-
-        .spinner {
-            border: 4px solid rgba(108, 92, 231, 0.1);
-            border-radius: 50%;
-            border-top: 4px solid var(--primary);
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 1.5rem auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .error-message {
-            color: var(--danger);
-            text-align: center;
-            margin: 1rem 0;
-            font-weight: 600;
-            padding: 0.8rem;
-            background-color: rgba(225, 112, 85, 0.1);
-            border-radius: var(--border-radius);
-        }
-
-        .progress-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 1rem;
-            margin: 1rem 0;
-            display: none;
-        }
-
-        .progress-bar {
-            width: 200px;
-            height: 6px;
-            background-color: #e0e0e0;
-            border-radius: 3px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            width: 0%;
-            transition: width 0.3s;
-        }
-
-        .btn-cancel {
-            background-color: #f0f0f0;
-            color: var(--dark);
-            border: 1px solid #ddd;
-        }
-
-        .btn-cancel:hover {
-            background-color: #e0e0e0;
-        }
-
-        footer {
-            background-color: var(--dark);
-            color: white;
-            text-align: center;
-            padding: 2rem 0;
-            margin-top: 2rem;
-        }
-
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 1.8rem;
-            }
-            .tabs {
-                flex-direction: row;
-                overflow-x: auto;
-            }
-            .tab {
-                flex: 1;
-                text-align: center;
-                white-space: nowrap;
-            }
+        .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 900; color: var(--ink); letter-spacing: -0.5px; }
+        .nav-logo span { color: var(--emerald); }
+        .nav-links { display: flex; gap: 0.5rem; list-style: none; }
+        .nav-links a { padding: 0.4rem 1rem; color: var(--ink-light); font-size: 0.9rem; font-weight: 500; cursor: pointer; border-radius: 50px; transition: all 0.2s; text-decoration: none; }
+        .nav-links a:hover { background: var(--cream-dark); color: var(--ink); }
+        .nav-links a.active { background: var(--ink); color: var(--cream); }
+        .nav-cta { background: var(--emerald) !important; color: var(--white) !important; }
+        .nav-cta:hover { background: var(--emerald-light) !important; }
+        .page { display: none; padding-top: 64px; min-height: 100vh; }
+        .page.active { display: block; }
+        .hero { padding: 6rem 2rem 4rem; max-width: 900px; margin: 0 auto; text-align: center; }
+        .hero-badge { display: inline-flex; align-items: center; gap: 0.5rem; background: var(--emerald-pale); color: var(--emerald); border: 1px solid rgba(13,110,90,0.2); padding: 0.4rem 1rem; border-radius: 50px; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 2rem; animation: fadeUp 0.6s ease both; }
+        .hero h1 { font-size: clamp(2.8rem, 6vw, 5rem); font-weight: 900; color: var(--ink); letter-spacing: -2px; margin-bottom: 1.5rem; animation: fadeUp 0.6s ease 0.1s both; }
+        .hero h1 em { font-style: italic; color: var(--emerald); }
+        .hero p { font-size: 1.15rem; color: var(--ink-light); max-width: 560px; margin: 0 auto 2.5rem; font-weight: 300; animation: fadeUp 0.6s ease 0.2s both; }
+        .hero-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; animation: fadeUp 0.6s ease 0.3s both; }
+        .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.85rem 1.8rem; border-radius: 50px; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.25s; text-decoration: none; }
+        .btn-primary { background: var(--ink); color: var(--cream); }
+        .btn-primary:hover { background: var(--emerald); transform: translateY(-2px); }
+        .btn-secondary { background: transparent; color: var(--ink); border: 1.5px solid var(--border); }
+        .btn-secondary:hover { background: var(--cream-dark); transform: translateY(-2px); }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
+        .features { max-width: 1000px; margin: 4rem auto; padding: 0 2rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; }
+        .feature-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.8rem; transition: all 0.3s; animation: fadeUp 0.6s ease both; }
+        .feature-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.08); }
+        .feature-icon { width: 44px; height: 44px; background: var(--emerald-pale); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 1rem; }
+        .feature-card h3 { font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; }
+        .feature-card p { font-size: 0.88rem; color: var(--ink-light); line-height: 1.5; }
+        .section-divider { max-width: 1000px; margin: 0 auto 4rem; padding: 0 2rem; display: flex; align-items: center; gap: 1rem; }
+        .section-divider::before, .section-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+        .section-divider span { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-light); }
+        .stats { max-width: 700px; margin: 0 auto 5rem; padding: 0 2rem; display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; }
+        .stat { text-align: center; }
+        .stat-num { font-family: 'Playfair Display', serif; font-size: 2.5rem; font-weight: 900; color: var(--emerald); }
+        .stat-label { font-size: 0.85rem; color: var(--ink-light); }
+        .tool-layout { max-width: 860px; margin: 0 auto; padding: 3rem 2rem; }
+        .tool-header { margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+        .tool-header h2 { font-size: 2rem; letter-spacing: -1px; }
+        .usage-badge { background: var(--cream-dark); border: 1px solid var(--border); padding: 0.4rem 1rem; border-radius: 50px; font-size: 0.82rem; font-weight: 600; color: var(--ink-light); }
+        .upload-zone { border: 2px dashed var(--border); border-radius: var(--radius-lg); padding: 2.5rem; text-align: center; cursor: pointer; transition: all 0.25s; background: var(--white); margin-bottom: 1rem; }
+        .upload-zone:hover, .upload-zone.drag-over { border-color: var(--emerald); background: var(--emerald-pale); }
+        .upload-zone-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+        .upload-zone p { font-size: 0.95rem; color: var(--ink-light); }
+        .upload-zone strong { color: var(--ink); }
+        .upload-zone small { font-size: 0.8rem; color: #999; display: block; margin-top: 0.3rem; }
+        input[type="file"] { display: none; }
+        .file-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+        .file-chip { display: flex; align-items: center; gap: 0.4rem; background: var(--emerald-pale); border: 1px solid rgba(13,110,90,0.2); color: var(--emerald); padding: 0.3rem 0.8rem; border-radius: 50px; font-size: 0.82rem; font-weight: 500; }
+        .file-chip-remove { cursor: pointer; font-size: 1rem; line-height: 1; opacity: 0.6; transition: opacity 0.2s; }
+        .file-chip-remove:hover { opacity: 1; }
+        .separator { text-align: center; font-size: 0.8rem; color: #999; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin: 1.2rem 0; position: relative; }
+        .separator::before, .separator::after { content: ''; position: absolute; top: 50%; width: 44%; height: 1px; background: var(--border); }
+        .separator::before { left: 0; }
+        .separator::after { right: 0; }
+        textarea { width: 100%; min-height: 160px; padding: 1rem 1.2rem; border: 1.5px solid var(--border); border-radius: var(--radius-lg); font-family: 'DM Sans', sans-serif; font-size: 0.95rem; background: var(--white); color: var(--ink); resize: vertical; transition: border-color 0.2s; margin-bottom: 1.2rem; }
+        textarea:focus { outline: none; border-color: var(--emerald); }
+        .tool-actions { display: flex; gap: 0.75rem; margin-bottom: 2rem; }
+        .progress-bar-wrap { display: none; background: var(--cream-dark); border-radius: 50px; height: 6px; margin-bottom: 1rem; overflow: hidden; }
+        .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--emerald), var(--gold)); border-radius: 50px; width: 0%; transition: width 0.4s ease; }
+        .status-msg { display: none; padding: 0.8rem 1rem; border-radius: var(--radius-lg); font-size: 0.9rem; font-weight: 500; margin-bottom: 1.5rem; }
+        .status-msg.error { background: #FEF2F2; color: #B91C1C; border: 1px solid #FECACA; }
+        .status-msg.success { background: var(--emerald-pale); color: var(--emerald); border: 1px solid rgba(13,110,90,0.2); }
+        .status-msg.info { background: #FFF7ED; color: #C2410C; border: 1px solid #FED7AA; }
+        .results-wrap { display: none; }
+        .results-tabs { display: flex; gap: 0.25rem; border-bottom: 1.5px solid var(--border); margin-bottom: 1.5rem; overflow-x: auto; }
+        .rtab { padding: 0.7rem 1.2rem; font-size: 0.88rem; font-weight: 500; color: var(--ink-light); cursor: pointer; border-bottom: 2.5px solid transparent; white-space: nowrap; transition: all 0.2s; background: none; border-top: none; border-left: none; border-right: none; font-family: 'DM Sans', sans-serif; }
+        .rtab:hover { color: var(--ink); }
+        .rtab.active { color: var(--emerald); border-bottom-color: var(--emerald); font-weight: 600; }
+        .rtab-content { display: none; }
+        .rtab-content.active { display: block; }
+        .result-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.8rem; line-height: 1.7; font-size: 0.95rem; color: var(--ink-light); }
+        .result-card strong { color: var(--ink); }
+        .chat-wrap { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-top: 2rem; }
+        .chat-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; }
+        .chat-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--emerald); animation: pulse 2s infinite; }
+        .chat-messages { height: 280px; overflow-y: auto; padding: 1.2rem 1.5rem; display: flex; flex-direction: column; gap: 0.75rem; }
+        .msg { max-width: 80%; padding: 0.7rem 1rem; border-radius: 16px; font-size: 0.9rem; line-height: 1.5; }
+        .msg-user { background: var(--ink); color: var(--cream); align-self: flex-end; border-bottom-right-radius: 4px; }
+        .msg-bot { background: var(--cream-dark); color: var(--ink); align-self: flex-start; border-bottom-left-radius: 4px; }
+        .chat-input-row { display: flex; gap: 0.5rem; padding: 1rem 1.5rem; border-top: 1px solid var(--border); }
+        .chat-input-row input { flex: 1; padding: 0.7rem 1rem; border: 1.5px solid var(--border); border-radius: 50px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; background: var(--cream); color: var(--ink); transition: border-color 0.2s; }
+        .chat-input-row input:focus { outline: none; border-color: var(--emerald); }
+        .chat-send-btn { width: 40px; height: 40px; border-radius: 50%; background: var(--ink); color: var(--cream); border: none; cursor: pointer; font-size: 1rem; transition: background 0.2s; display: flex; align-items: center; justify-content: center; }
+        .chat-send-btn:hover { background: var(--emerald); }
+        .spinner { display: none; width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--emerald); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 1rem auto; }
+        .pricing-layout { max-width: 900px; margin: 0 auto; padding: 4rem 2rem; text-align: center; }
+        .pricing-layout h2 { font-size: 2.5rem; letter-spacing: -1.5px; margin-bottom: 0.75rem; }
+        .pricing-layout > p { color: var(--ink-light); font-size: 1rem; margin-bottom: 3rem; }
+        .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
+        .pricing-card { background: var(--white); border: 1.5px solid var(--border); border-radius: 16px; padding: 2rem; text-align: left; position: relative; transition: all 0.3s; }
+        .pricing-card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px rgba(0,0,0,0.08); }
+        .pricing-card.featured { border-color: var(--emerald); background: var(--ink); color: var(--cream); }
+        .pricing-badge { position: absolute; top: -12px; right: 1.5rem; background: var(--gold); color: var(--ink); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.3rem 0.8rem; border-radius: 50px; }
+        .plan-name { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1rem; color: var(--emerald); }
+        .pricing-card.featured .plan-name { color: var(--gold); }
+        .plan-price { font-family: 'Playfair Display', serif; font-size: 3rem; font-weight: 900; letter-spacing: -2px; line-height: 1; margin-bottom: 0.25rem; }
+        .plan-period { font-size: 0.85rem; color: #999; margin-bottom: 1.5rem; }
+        .pricing-card.featured .plan-period { color: rgba(245,240,232,0.6); }
+        .plan-features { list-style: none; margin-bottom: 1.8rem; display: flex; flex-direction: column; gap: 0.6rem; }
+        .plan-features li { font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; color: var(--ink-light); }
+        .pricing-card.featured .plan-features li { color: rgba(245,240,232,0.8); }
+        .plan-features li::before { content: '✓'; color: var(--emerald); font-weight: 700; font-size: 0.85rem; }
+        .pricing-card.featured .plan-features li::before { color: var(--gold); }
+        .free-card { background: var(--cream-dark); border: 1.5px dashed var(--border); border-radius: 16px; padding: 1.5rem 2rem; text-align: left; margin-bottom: 1.5rem; }
+        .free-card h3 { font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 600; margin-bottom: 0.4rem; }
+        .free-card p { font-size: 0.88rem; color: var(--ink-light); }
+        .legal-layout { max-width: 720px; margin: 0 auto; padding: 4rem 2rem; }
+        .legal-layout h2 { font-size: 2rem; letter-spacing: -1px; margin-bottom: 0.5rem; }
+        .legal-date { font-size: 0.82rem; color: #999; margin-bottom: 2.5rem; }
+        .legal-layout h3 { font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 700; margin: 2rem 0 0.5rem; }
+        .legal-layout p, .legal-layout li { font-size: 0.92rem; color: var(--ink-light); line-height: 1.7; margin-bottom: 0.5rem; }
+        .legal-layout ul { padding-left: 1.5rem; }
+        footer { background: var(--ink); color: rgba(245,240,232,0.7); padding: 3rem 2rem 2rem; }
+        .footer-inner { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 1fr auto; gap: 2rem; align-items: start; }
+        .footer-brand { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 900; color: var(--cream); margin-bottom: 0.5rem; }
+        .footer-brand span { color: var(--emerald-light); }
+        .footer-desc { font-size: 0.85rem; max-width: 300px; }
+        .footer-links { display: flex; flex-direction: column; gap: 0.5rem; text-align: right; }
+        .footer-links a { color: rgba(245,240,232,0.6); font-size: 0.85rem; cursor: pointer; transition: color 0.2s; text-decoration: none; }
+        .footer-links a:hover { color: var(--cream); }
+        .footer-bottom { max-width: 1000px; margin: 2rem auto 0; padding-top: 1.5rem; border-top: 1px solid rgba(245,240,232,0.1); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; font-size: 0.8rem; color: rgba(245,240,232,0.4); }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        @media (max-width: 600px) {
+            .nav-links { display: none; }
+            .hero h1 { font-size: 2.4rem; }
+            .footer-inner { grid-template-columns: 1fr; }
+            .footer-links { text-align: left; }
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <div class="logo">📚 CoursClair</div>
-            <nav>
-                <ul>
-                    <li><a onclick="showTab('home')">Accueil</a></li>
-                    <li><a onclick="showTab('tool')">Outil</a></li>
-                    <li><a onclick="showTab('pricing')">Tarifs</a></li>
+
+<nav>
+    <div class="nav-logo">Cours<span>Clair</span></div>
+    <ul class="nav-links">
+        <li><a onclick="showPage('home')" id="nav-home" class="active">Accueil</a></li>
+        <li><a onclick="showPage('tool')" id="nav-tool">Outil</a></li>
+        <li><a onclick="showPage('pricing')" id="nav-pricing">Tarifs</a></li>
+        <li><a onclick="showPage('tool')" id="nav-cta" class="nav-cta">Essayer gratuitement</a></li>
+    </ul>
+</nav>
+
+<div id="page-home" class="page active">
+    <div class="hero">
+        <div class="hero-badge">✦ IA éducative · 100% en français</div>
+        <h1>Comprends tes cours<br><em>instantanément</em></h1>
+        <p>Uploade un PDF, une image ou colle ton texte. CoursClair l'analyse, l'explique, le résume et génère des questions pour t'entraîner.</p>
+        <div class="hero-actions">
+            <button class="btn btn-primary" onclick="showPage('tool')">Analyser un cours →</button>
+            <button class="btn btn-secondary" onclick="showPage('pricing')">Voir les tarifs</button>
+        </div>
+    </div>
+    <div class="section-divider"><span>Ce que tu obtiens</span></div>
+    <div class="features">
+        <div class="feature-card" style="animation-delay:0.05s"><div class="feature-icon">💡</div><h3>Explication claire</h3><p>Ton cours reformulé simplement, comme si un prof te l'expliquait en tête-à-tête.</p></div>
+        <div class="feature-card" style="animation-delay:0.1s"><div class="feature-icon">📋</div><h3>Résumé express</h3><p>L'essentiel condensé en quelques lignes pour réviser rapidement.</p></div>
+        <div class="feature-card" style="animation-delay:0.15s"><div class="feature-icon">🔍</div><h3>Exemples concrets</h3><p>3 exemples du monde réel pour ancrer les concepts dans ta mémoire.</p></div>
+        <div class="feature-card" style="animation-delay:0.2s"><div class="feature-icon">🎯</div><h3>Questions d'entraînement</h3><p>QCM, questions ouvertes et synthèse pour tester ta compréhension.</p></div>
+        <div class="feature-card" style="animation-delay:0.25s"><div class="feature-icon">💬</div><h3>Chatbot assistant</h3><p>Pose toutes tes questions sur le cours, l'IA répond en contexte.</p></div>
+        <div class="feature-card" style="animation-delay:0.3s"><div class="feature-icon">📁</div><h3>PDF, image, texte</h3><p>Supporte les PDF, photos de notes (OCR), et texte brut.</p></div>
+    </div>
+    <div class="section-divider"><span>En chiffres</span></div>
+    <div class="stats">
+        <div class="stat"><div class="stat-num">2</div><div class="stat-label">analyses gratuites</div></div>
+        <div class="stat"><div class="stat-num">∞</div><div class="stat-label">avec abonnement</div></div>
+        <div class="stat"><div class="stat-num">100%</div><div class="stat-label">en français</div></div>
+    </div>
+</div>
+
+<div id="page-tool" class="page">
+    <div class="tool-layout">
+        <div class="tool-header">
+            <h2>Analyse ton cours</h2>
+            <div class="usage-badge" id="usage-badge">2 analyses gratuites restantes</div>
+        </div>
+        <div id="status-msg" class="status-msg"></div>
+        <div class="upload-zone" id="upload-zone">
+            <div class="upload-zone-icon">📁</div>
+            <p><strong>Glisse-dépose tes fichiers ici</strong></p>
+            <p>ou clique pour sélectionner</p>
+            <small>PDF, TXT, JPG, PNG — max 10 Mo</small>
+            <input type="file" id="file-input" accept=".pdf,.txt,.jpg,.jpeg,.png" multiple>
+        </div>
+        <div class="file-chips" id="file-chips"></div>
+        <div class="separator">ou</div>
+        <textarea id="course-text" placeholder="Colle ton cours ici…"></textarea>
+        <div class="progress-bar-wrap" id="progress-wrap"><div class="progress-bar-fill" id="progress-fill"></div></div>
+        <div class="tool-actions">
+            <button class="btn btn-primary" id="analyze-btn" onclick="startAnalysis()">🔍 Analyser</button>
+            <button class="btn btn-secondary" id="cancel-btn" style="display:none" onclick="cancelAnalysis()">✕ Annuler</button>
+        </div>
+        <div class="spinner" id="spinner"></div>
+        <div class="results-wrap" id="results-wrap">
+            <div class="results-tabs">
+                <button class="rtab active" onclick="showResultTab('explanation', this)">Explication</button>
+                <button class="rtab" onclick="showResultTab('summary', this)">Résumé</button>
+                <button class="rtab" onclick="showResultTab('examples', this)">Exemples</button>
+                <button class="rtab" onclick="showResultTab('questions', this)">Questions</button>
+            </div>
+            <div id="rtab-explanation" class="rtab-content active"><div class="result-card" id="result-explanation"></div></div>
+            <div id="rtab-summary" class="rtab-content"><div class="result-card" id="result-summary"></div></div>
+            <div id="rtab-examples" class="rtab-content"><div class="result-card" id="result-examples"></div></div>
+            <div id="rtab-questions" class="rtab-content"><div class="result-card" id="result-questions"></div></div>
+        </div>
+        <div class="chat-wrap" id="chat-wrap" style="display:none">
+            <div class="chat-header"><div class="chat-dot"></div>Assistant CoursClair</div>
+            <div class="chat-messages" id="chat-messages">
+                <div class="msg msg-bot">Bonjour ! Pose-moi n'importe quelle question sur ton cours 👋</div>
+            </div>
+            <div class="chat-input-row">
+                <input type="text" id="chat-input" placeholder="Ta question…" onkeydown="if(event.key==='Enter') sendChat()">
+                <button class="chat-send-btn" onclick="sendChat()">↑</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="page-pricing" class="page">
+    <div class="pricing-layout">
+        <h2>Simple &amp; transparent</h2>
+        <p>Commence gratuitement, passe à illimité quand tu veux.</p>
+        <div class="free-card">
+            <h3>🎁 Gratuit — 2 analyses offertes</h3>
+            <p>Essaie CoursClair sans carte bancaire. 2 analyses complètes pour te faire une idée.</p>
+        </div>
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <div class="plan-name">Mensuel</div>
+                <div class="plan-price">8€</div>
+                <div class="plan-period">par mois · sans engagement</div>
+                <ul class="plan-features">
+                    <li>Analyses illimitées</li>
+                    <li>PDF, images, texte</li>
+                    <li>Chatbot assistant inclus</li>
+                    <li>Résultats instantanés</li>
                 </ul>
-            </nav>
+                <div id="paypal-button-monthly"></div>
+            </div>
+            <div class="pricing-card featured">
+                <div class="pricing-badge">Meilleure offre</div>
+                <div class="plan-name">Annuel</div>
+                <div class="plan-price">60€</div>
+                <div class="plan-period">par an · économise 36€</div>
+                <ul class="plan-features">
+                    <li>Analyses illimitées</li>
+                    <li>PDF, images, texte</li>
+                    <li>Chatbot assistant inclus</li>
+                    <li>Priorité sur les nouveautés</li>
+                </ul>
+                <div id="paypal-button-yearly"></div>
+            </div>
         </div>
-    </header>
+    </div>
+</div>
 
-    <main>
-        <section id="home" class="section active">
-            <div class="container">
-                <div class="hero">
-                    <h1>Comprends tes cours avec <span style="color: var(--secondary);">CoursClair</span></h1>
-                    <p>Uploade tes fichiers (PDF, images, texte) ou colle ton cours. Notre IA explique tout, résume, donne des exemples et génère des questions pour t'entraîner.</p>
-                    <button class="btn btn-primary" onclick="showTab('tool')">Essayer gratuitement</button>
-                </div>
-            </div>
-        </section>
+<div id="page-privacy" class="page">
+    <div class="legal-layout">
+        <h2>Politique de confidentialité</h2>
+        <p class="legal-date">Dernière mise à jour : avril 2026</p>
+        <h3>1. Qui sommes-nous ?</h3>
+        <p>CoursClair est un service en ligne permettant l'analyse de cours via intelligence artificielle. Le responsable du traitement est l'éditeur du site accessible à l'adresse de déploiement Vercel.</p>
+        <h3>2. Données collectées</h3>
+        <p>Nous collectons uniquement :</p>
+        <ul><li>Le texte ou fichier soumis pour analyse (traité en temps réel, non stocké)</li><li>Un cookie anonyme de comptage d'utilisations gratuites</li><li>Les données de paiement traitées exclusivement par PayPal (nous n'y avons pas accès)</li></ul>
+        <h3>3. Utilisation des données</h3>
+        <p>Les textes soumis sont envoyés à l'API Groq pour traitement et ne sont pas conservés sur nos serveurs. Aucune donnée personnelle identifiable n'est collectée sans votre consentement.</p>
+        <h3>4. Cookies</h3>
+        <p>Un cookie nommé <code>coursclair_free_uses</code> est déposé sur votre navigateur pour comptabiliser vos utilisations gratuites. Il expire après 365 jours et ne contient aucune donnée personnelle.</p>
+        <h3>5. Partage des données</h3>
+        <p>Vos données ne sont jamais vendues ni partagées avec des tiers, à l'exception de Groq (traitement IA) et PayPal (paiement), conformément à leurs politiques respectives.</p>
+        <h3>6. Vos droits</h3>
+        <p>Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et de suppression. Contactez-nous via le dépôt GitHub du projet.</p>
+        <h3>7. Hébergement</h3>
+        <p>Le site est hébergé sur Vercel (San Francisco, CA, USA). Les transferts de données sont sécurisés via HTTPS/TLS.</p>
+    </div>
+</div>
 
-        <section id="tool" class="section">
-            <div class="container">
-                <div class="tool-container">
-                    <h2 style="text-align: center; margin-bottom: 1.5rem; color: var(--primary);">Analyse ton cours</h2>
-                    <p id="limit-message" style="text-align: center; margin-bottom: 1rem; font-weight: 600;"></p>
-                    <p id="error-message" class="error-message" style="display: none;"></p>
+<div id="page-terms" class="page">
+    <div class="legal-layout">
+        <h2>Conditions d'utilisation</h2>
+        <p class="legal-date">Dernière mise à jour : avril 2026</p>
+        <h3>1. Acceptation</h3>
+        <p>En utilisant CoursClair, vous acceptez les présentes conditions. Si vous n'y consentez pas, veuillez ne pas utiliser le service.</p>
+        <h3>2. Description du service</h3>
+        <p>CoursClair permet d'analyser des cours via IA. Le service est fourni "tel quel", sans garantie de résultats spécifiques.</p>
+        <h3>3. Utilisation acceptable</h3>
+        <ul><li>Soumettre du contenu illégal, haineux ou portant atteinte aux droits d'autrui</li><li>Tenter de contourner les limites d'utilisation</li><li>Utiliser le service à des fins commerciales non autorisées</li></ul>
+        <h3>4. Abonnements et paiements</h3>
+        <p>Les paiements sont traités par PayPal. Les abonnements mensuels et annuels donnent accès à des analyses illimitées pendant leur durée. Aucun remboursement n'est prévu sauf obligation légale.</p>
+        <h3>5. Limitation de responsabilité</h3>
+        <p>CoursClair ne peut être tenu responsable d'erreurs dans les analyses générées par l'IA. Les résultats sont à titre indicatif et ne remplacent pas un enseignant.</p>
+        <h3>6. Modifications</h3>
+        <p>Nous nous réservons le droit de modifier ces conditions à tout moment. Les utilisateurs seront informés via le site.</p>
+    </div>
+</div>
 
-                    <div class="upload-area" id="upload-area">
-                        <p style="font-size: 2.5rem; margin-bottom: 1rem;">📁</p>
-                        <p><strong>Glisse-dépose tes fichiers ici</strong></p>
-                        <p style="font-size: 0.9rem; color: #666;">(PDF, TXT, JPG, PNG - Max 100 Mo)</p>
-                        <input type="file" id="file-input" class="file-input" accept=".pdf,.txt,.jpg,.jpeg,.png" multiple>
-                    </div>
-                    <div class="file-preview" id="file-preview"></div>
-
-                    <p style="margin: 1.5rem 0; text-align: center;">OU</p>
-                    <textarea id="course-text" placeholder="Colle ton cours ici..."></textarea>
-
-                    <div style="text-align: center; margin: 2rem 0;">
-                        <div style="display: flex; justify-content: center; gap: 1rem;">
-                            <button id="analyze-button" class="btn btn-primary" onclick="startAnalysis()">
-                                🔍 Analyser le cours
-                            </button>
-                            <button id="cancel-button" class="btn btn-cancel" onclick="cancelAnalysis()" style="display: none;">
-                                ❌ Annuler
-                            </button>
-                        </div>
-                        <div class="progress-container" id="progress-container">
-                            <div class="progress-bar">
-                                <div class="progress-fill" id="progress-fill"></div>
-                            </div>
-                            <span id="progress-text">0%</span>
-                        </div>
-                    </div>
-
-                    <div id="loading-spinner" class="spinner" style="display: none;"></div>
-
-                    <div class="tabs">
-                        <button class="tab active" onclick="showResultTab('explanation')">Explication</button>
-                        <button class="tab" onclick="showResultTab('summary')">Résumé</button>
-                        <button class="tab" onclick="showResultTab('examples')">Exemples</button>
-                        <button class="tab" onclick="showResultTab('questions')">Questions</button>
-                    </div>
-
-                    <div id="explanation" class="tab-content active">
-                        <p id="explanation-result">Ton explication apparaîtra ici après analyse.</p>
-                    </div>
-                    <div id="summary" class="tab-content">
-                        <p id="summary-result">Ton résumé apparaîtra ici après analyse.</p>
-                    </div>
-                    <div id="examples" class="tab-content">
-                        <p id="examples-result">Tes exemples apparaîtont ici après analyse.</p>
-                    </div>
-                    <div id="questions" class="tab-content">
-                        <p id="questions-result">Tes questions d'entraînement apparaîtont ici après analyse.</p>
-                    </div>
-
-                    <div style="margin-top: 2rem;">
-                        <h3 style="margin-bottom: 1rem; color: var(--primary); text-align: center;">Pose-moi une question sur ton cours</h3>
-                        <div class="chat-container" id="chat-messages">
-                            <div class="message bot-message">Bonjour ! Je suis ton assistant IA avancé. Uploade ou colle ton cours, puis pose-moi n'importe quelle question. Je peux tout expliquer ! 😊</div>
-                        </div>
-                        <div class="chat-input">
-                            <input type="text" id="chat-input" placeholder="Ex: Explique-moi la photosynthèse en détail...">
-                            <button class="btn btn-primary" onclick="sendChatMessage()">Envoyer</button>
-                        </div>
-                    </div>
-
-                    <div style="text-align: center; margin-top: 2rem;">
-                        <button class="btn btn-secondary" onclick="showTab('pricing')" style="background: white; color: var(--primary); border: 2px solid var(--primary);">Déverrouiller l'accès illimité</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="pricing" class="section">
-            <div class="container">
-                <h2 style="text-align: center; margin-bottom: 2rem; color: var(--primary);">Nos tarifs</h2>
-                <div class="pricing-grid">
-                    <div class="pricing-card">
-                        <h3>Accès 1 mois</h3>
-                        <div class="price">8 <span>€</span></div>
-                        <p>Paiement unique pour 1 mois d'accès illimité</p>
-                        <div id="paypal-button-monthly"></div>
-                    </div>
-                    <div class="pricing-card">
-                        <h3>Accès 1 an</h3>
-                        <div class="price">60 <span>€</span></div>
-                        <p>Paiement unique pour 1 an d'accès illimité</p>
-                        <div id="paypal-button-yearly"></div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer>
-        <div class="container">
-            <p>&copy; 2026 CoursClair. Tous droits réservés.</p>
+<footer>
+    <div class="footer-inner">
+        <div>
+            <div class="footer-brand">Cours<span>Clair</span></div>
+            <p class="footer-desc">L'IA qui transforme tes cours en connaissances claires et durables.</p>
         </div>
-    </footer>
-
-    <script>
-        // ========== VARIABLES GLOBALES ==========
-        let uploadedFiles = [];
-        let currentText = "";
-        let isProcessing = false;
-        let analysisInProgress = false;
-        let analysisTimeout = null;
-        let currentCourseText = "";
-
-        // ========== AU CHARGEMENT DE LA PAGE ==========
-        document.addEventListener('DOMContentLoaded', function() {
-            if (!getCookie("coursclair_free_uses")) {
-                setCookie("coursclair_free_uses", 2, 30);
-            }
-
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.has('paid') && urlParams.get('paid') === 'true') {
-                const days = parseInt(urlParams.get('days')) || 365;
-                setPaidUser(days);
-                showTab('tool');
-                window.history.replaceState({}, document.title, window.location.pathname);
-                showError('✅ Paiement réussi ! Accès illimité activé.');
-            }
-
-            showTab('home');
-            setupEventListeners();
-        });
-
-        // ========== CONFIGURATION DES ÉVÉNEMENTS ==========
-        function setupEventListeners() {
-            const uploadArea = document.getElementById('upload-area');
-            const fileInput = document.getElementById('file-input');
-
-            uploadArea.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                uploadArea.classList.add('dragover');
-            });
-
-            uploadArea.addEventListener('dragleave', () => {
-                uploadArea.classList.remove('dragover');
-            });
-
-            uploadArea.addEventListener('drop', (e) => {
-                e.preventDefault();
-                uploadArea.classList.remove('dragover');
-                if (e.dataTransfer.files.length) {
-                    handleFiles(e.dataTransfer.files);
-                }
-            });
-
-            uploadArea.addEventListener('click', () => {
-                fileInput.click();
-            });
-
-            fileInput.addEventListener('change', () => {
-                if (fileInput.files.length) {
-                    handleFiles(fileInput.files);
-                }
-            });
-
-            document.getElementById("chat-input").addEventListener("keypress", function(e) {
-                if (e.key === "Enter") {
-                    e.preventDefault();
-                    sendChatMessage();
-                }
-            });
-        }
-
-        // ========== GESTION DES COOKIES ==========
-        function getCookie(name) {
-            const value = `; ${document.cookie}`;
-            const parts = value.split(`; ${name}=`);
-            if (parts.length === 2) return parts.pop().split(';').shift();
-            return null;
-        }
-
-        function setCookie(name, value, days) {
-            const date = new Date();
-            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-            document.cookie = `${name}=${value}; expires=${date.toUTCString()}; path=/; SameSite=Lax`;
-        }
-
-        // ========== GESTION DES UTILISATIONS GRATUITES ==========
-        function checkFreeUses() {
-            const freeUses = parseInt(getCookie("coursclair_free_uses")) || 0;
-            const limitMessage = document.getElementById("limit-message");
-            const analyzeButton = document.getElementById("analyze-button");
-
-            if (isPaidUser()) {
-                analyzeButton.disabled = false;
-                limitMessage.innerHTML = '<span style="color: #00B894;">✓ Accès illimité activé !</span>';
-            } else if (freeUses <= 0) {
-                analyzeButton.disabled = true;
-                limitMessage.innerHTML = '<span style="color: #E17055;">⚠️ Tu as utilisé tes 2 analyses gratuites. <a href="#" onclick="showTab(\'pricing\')" style="color: #6C5CE7; text-decoration: underline;">Déverrouille l\'accès</a> !</span>';
-            } else {
-                analyzeButton.disabled = false;
-                limitMessage.innerHTML = `✓ Il te reste <strong>${freeUses}</strong> analyse(s) gratuite(s).`;
-            }
-        }
-
-        function useFreeAnalysis() {
-            if (isPaidUser()) return;
-            let freeUses = parseInt(getCookie("coursclair_free_uses")) || 2;
-            if (freeUses > 0) {
-                freeUses--;
-                setCookie("coursclair_free_uses", freeUses, 30);
-                checkFreeUses();
-            }
-        }
-
-        // ========== GESTION DES UTILISATEURS PAYANTS ==========
-        function isPaidUser() {
-            const paid = getCookie("coursclair_paid") === "true";
-            const expiry = getCookie("coursclair_expiry");
-            if (!paid || !expiry) return false;
-
-            const expiryDate = new Date(expiry);
-            if (expiryDate < new Date()) {
-                setCookie("coursclair_paid", "false", -1);
-                setCookie("coursclair_expiry", "", -1);
-                return false;
-            }
-            return true;
-        }
-
-        function setPaidUser(days) {
-            setCookie("coursclair_paid", "true", days);
-            const expiryDate = new Date();
-            expiryDate.setDate(expiryDate.getDate() + days);
-            setCookie("coursclair_expiry", expiryDate.toISOString(), days);
-        }
-
-        // ========== GESTION DES ONGLETS ==========
-        function showTab(tabId) {
-            const currentSection = document.querySelector('.section.active');
-            if (currentSection && currentSection.id === tabId) return;
-
-            document.querySelectorAll('.section').forEach(section => {
-                section.classList.remove('active');
-            });
-
-            document.getElementById(tabId).classList.add('active');
-
-            if (tabId === 'pricing' && !window.paypal) {
-                loadPayPalSDK();
-            }
-
-            if (tabId === 'tool') {
-                checkFreeUses();
-            }
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function showResultTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.getElementById(tabId).classList.add('active');
-            event.target.classList.add('active');
-        }
-
-        // ========== GESTION DES FICHIERS ==========
-        function handleFiles(files) {
-            const errorMessage = document.getElementById('error-message');
-            errorMessage.style.display = 'none';
-
-            for (let file of files) {
-                if (file.type === '' || file.type === 'application/x-directory') {
-                    showError("❌ Les dossiers ne sont pas supportés. Veuillez uploader des fichiers (PDF, TXT, JPG, PNG).");
-                    return;
-                }
-            }
-
-            const maxSize = 100 * 1024 * 1024;
-            const allowedTypes = ['application/pdf', 'text/plain', 'image/jpeg', 'image/png', 'image/jpg'];
-
-            for (let file of files) {
-                if (file.size > maxSize) {
-                    showError(`❌ Le fichier <strong>${file.name}</strong> est trop grand (max 100 Mo).`);
-                    return;
-                }
-                if (!allowedTypes.includes(file.type) && !file.name.endsWith('.txt')) {
-                    showError(`❌ Type de fichier non autorisé : <strong>${file.name}</strong>. (PDF, TXT, JPG, PNG uniquement)`);
-                    return;
-                }
-            }
-
-            uploadedFiles = Array.from(files);
-            displayFilePreview();
-
-            if (uploadedFiles.length === 1) {
-                showError(`✅ Fichier "${uploadedFiles[0].name}" prêt. Cliquez sur "Analyser le cours".`);
-            } else {
-                showError(`✅ ${uploadedFiles.length} fichiers prêts. Cliquez sur "Analyser le cours".`);
-            }
-        }
-
-        function displayFilePreview() {
-            const filePreview = document.getElementById('file-preview');
-            filePreview.innerHTML = '';
-            uploadedFiles.forEach((file, index) => {
-                const fileItem = document.createElement('div');
-                fileItem.className = 'file-preview-item';
-
-                let icon = '📄';
-                if (file.type.startsWith('image/')) icon = '🖼️';
-                else if (file.name.endsWith('.pdf')) icon = '📕';
-
-                fileItem.innerHTML = `
-                    ${icon} <strong>${file.name}</strong> (${formatFileSize(file.size)})
-                    <span class="remove" onclick="removeFile(${index})" title="Supprimer">✕</span>
-                `;
-                filePreview.appendChild(fileItem);
-            });
-        }
-
-        function removeFile(index) {
-            uploadedFiles.splice(index, 1);
-            displayFilePreview();
-            if (uploadedFiles.length === 0) {
-                document.getElementById('course-text').value = currentText;
-            }
-        }
-
-        function formatFileSize(bytes) {
-            if (bytes < 1024) return bytes + ' octets';
-            else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' Ko';
-            else return (bytes / 1048576).toFixed(1) + ' Mo';
-        }
-
-        function showError(message) {
-            const errorElement = document.getElementById('error-message');
-            errorElement.innerHTML = message;
-            errorElement.style.display = 'block';
-        }
-
-        // ========== FONCTION PRINCIPALE POUR ANALYSER ==========
-        async function startAnalysis() {
-            if (analysisInProgress) {
-                showError("⏳ Une analyse est déjà en cours. Veuillez patienter ou cliquer sur 'Annuler'.");
-                return;
-            }
-
-            analysisInProgress = true;
-            const analyzeButton = document.getElementById('analyze-button');
-            const cancelButton = document.getElementById('cancel-button');
-            const progressContainer = document.getElementById('progress-container');
-            const progressFill = document.getElementById('progress-fill');
-            const progressText = document.getElementById('progress-text');
-
-            analyzeButton.disabled = true;
-            cancelButton.style.display = 'inline-flex';
-            progressContainer.style.display = 'flex';
-            progressFill.style.width = '0%';
-            progressText.textContent = '0%';
-
-            analysisTimeout = setTimeout(() => {
-                cancelAnalysis();
-                showError("❌ L'analyse prend trop de temps. Veuillez réessayer avec un fichier plus petit ou un texte plus court.");
-            }, 30000);
-
-            try {
-                const textArea = document.getElementById("course-text");
-                const userText = textArea.value.trim();
-
-                if (userText) {
-                    currentCourseText = userText;
-                    await runAnalysisSteps(userText);
-                    return;
-                }
-
-                if (uploadedFiles.length > 0) {
-                    if (uploadedFiles.length === 1) {
-                        updateProgress(50, "Extraction du texte...");
-                        await extractTextFromFile(uploadedFiles[0]);
-                        if (analysisInProgress) {
-                            currentCourseText = textArea.value;
-                            await runAnalysisSteps(textArea.value);
-                        }
-                        return;
-                    } else {
-                        updateProgress(50, "Fusion des fichiers...");
-                        await processMultipleFiles();
-                        if (analysisInProgress) {
-                            currentCourseText = textArea.value;
-                            await runAnalysisSteps(textArea.value);
-                        }
-                        return;
-                    }
-                }
-
-                showError("❌ Veuillez coller un texte ou uploader au moins un fichier.");
-            } catch (error) {
-                console.error("Erreur dans startAnalysis:", error);
-                showError(`❌ Une erreur est survenue: ${error.message}`);
-            } finally {
-                cleanupAnalysis();
-            }
-        }
-
-        async function runAnalysisSteps(text) {
-            try {
-                updateProgress(75, "Analyse en cours...");
-
-                if (!isPaidUser()) {
-                    const freeUses = parseInt(getCookie("coursclair_free_uses")) || 0;
-                    if (freeUses <= 0) {
-                        showError("❌ Tu as utilisé tes 2 analyses gratuites. <a href='#' onclick='showTab(\"pricing\")' style='color: #6C5CE7; text-decoration: underline;'>Déverrouille l'accès</a> !");
-                        cleanupAnalysis();
-                        return;
-                    }
-                    useFreeAnalysis();
-                }
-
-                updateProgress(90, "Génération des résultats...");
-                await analyzeCourse(text);
-            } catch (error) {
-                console.error("Erreur dans runAnalysisSteps:", error);
-                showError(`❌ Erreur lors de l'analyse: ${error.message}`);
-                cleanupAnalysis();
-            }
-        }
-
-        function updateProgress(percentage, message) {
-            const progressFill = document.getElementById('progress-fill');
-            const progressText = document.getElementById('progress-text');
-            progressFill.style.width = `${percentage}%`;
-            progressText.textContent = `${percentage}% - ${message}`;
-        }
-
-        function cleanupAnalysis() {
-            clearTimeout(analysisTimeout);
-            analysisInProgress = false;
-
-            const analyzeButton = document.getElementById('analyze-button');
-            const cancelButton = document.getElementById('cancel-button');
-            const progressContainer = document.getElementById('progress-container');
-            const loadingSpinner = document.getElementById('loading-spinner');
-
-            analyzeButton.disabled = false;
-            cancelButton.style.display = 'none';
-            progressContainer.style.display = 'none';
-            loadingSpinner.style.display = 'none';
-        }
-
-        function cancelAnalysis() {
-            if (!analysisInProgress) return;
-            cleanupAnalysis();
-            showError("❌ Analyse annulée.");
-        }
-
-        // ========== EXTRACTION DE TEXTE ==========
-        async function extractTextFromFile(file) {
-            if (isProcessing) return;
-            isProcessing = true;
-
-            const textArea = document.getElementById('course-text');
-            currentText = textArea.value;
-            textArea.value = "⏳ Extraction du texte en cours...";
-            document.getElementById('loading-spinner').style.display = 'block';
-            errorMessage.style.display = 'none';
-
-            try {
-                if (file.type.startsWith('image/')) {
-                    await extractTextFromImage(file);
-                } else if (file.name.endsWith('.pdf')) {
-                    await extractTextFromPDF(file);
-                } else if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
-                    await extractTextFromTextFile(file);
-                }
-                showError('✅ Texte extrait ! Cliquez sur "Analyser le cours".');
-            } catch (error) {
-                console.error("Erreur d'extraction :", error);
-                textArea.value = currentText;
-                showError(`❌ Erreur d'extraction : ${error.message}`);
-                cleanupAnalysis();
-            } finally {
-                isProcessing = false;
-                document.getElementById('loading-spinner').style.display = 'none';
-            }
-        }
-
-        async function processMultipleFiles() {
-            const textArea = document.getElementById('course-text');
-            textArea.value = "⏳ Fusion des fichiers en cours...";
-            document.getElementById('loading-spinner').style.display = 'block';
-            errorMessage.style.display = 'none';
-
-            let combinedText = "";
-
-            try {
-                for (const file of uploadedFiles) {
-                    const text = await extractTextFromSingleFile(file);
-                    combinedText += `\n\n--- Fichier: ${file.name} ---\n\n${text}\n\n`;
-                }
-
-                textArea.value = combinedText.trim();
-                currentText = combinedText.trim();
-                showError('✅ Tous les fichiers ont été fusionnés ! Cliquez à nouveau sur "Analyser le cours".');
-            } catch (error) {
-                console.error("Erreur lors de la fusion des fichiers :", error);
-                textArea.value = currentText;
-                showError(`❌ Erreur lors de la fusion : ${error.message}`);
-                cleanupAnalysis();
-            } finally {
-                document.getElementById('loading-spinner').style.display = 'none';
-            }
-        }
-
-        async function extractTextFromSingleFile(file) {
-            if (file.type.startsWith('image/')) {
-                return await extractTextFromImage(file);
-            } else if (file.name.endsWith('.pdf')) {
-                return await extractTextFromPDF(file);
-            } else if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
-                return await extractTextFromTextFile(file);
-            } else {
-                throw new Error(`Type de fichier non supporté : ${file.type}`);
-            }
-        }
-
-        async function extractTextFromImage(file) {
-            const textArea = document.getElementById('course-text');
-            try {
-                if (!window.Tesseract) {
-                    await loadTesseract();
-                }
-
-                const tesseractTimeout = setTimeout(() => {
-                    throw new Error("Extraction OCR trop longue. Essayez avec une image plus petite ou plus claire.");
-                }, 20000);
-
-                const { data: { text } } = await window.Tesseract.recognize(
-                    file,
-                    'fra+eng',
-                    {
-                        tessedit_char_whitelist: '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZàâäéèêëîïôöùûüçÿœæÀÂÄÉÈÊËÎÏÔÖÙÛÜÇŸŒÆ.,;:!?\'"-()[]{}',
-                        preserve_interword_spaces: '1',
-                    }
-                );
-
-                clearTimeout(tesseractTimeout);
-                textArea.value = text.trim();
-                currentText = text.trim();
-            } catch (error) {
-                console.error("Erreur OCR :", error);
-                textArea.value = currentText;
-                throw error;
-            }
-        }
-
-        async function extractTextFromPDF(file) {
-            const textArea = document.getElementById('course-text');
-            try {
-                if (!window.pdfjsLib) {
-                    await loadPDFJS();
-                }
-
-                const pdfTimeout = setTimeout(() => {
-                    throw new Error("Extraction PDF trop longue. Essayez avec un fichier plus petit.");
-                }, 20000);
-
-                window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js';
-                const fileURL = URL.createObjectURL(file);
-                const pdf = await window.pdfjsLib.getDocument(fileURL).promise;
-                let fullText = '';
-
-                for (let i = 1; i <= pdf.numPages; i++) {
-                    const page = await pdf.getPage(i);
-                    const textContent = await page.getTextContent();
-                    const text = textContent.items.map(item => item.str).join(' ');
-                    fullText += text + '\n';
-                }
-
-                clearTimeout(pdfTimeout);
-                textArea.value = fullText.trim();
-                currentText = fullText.trim();
-                URL.revokeObjectURL(fileURL);
-            } catch (error) {
-                console.error("Erreur PDF :", error);
-                textArea.value = currentText;
-                throw error;
-            }
-        }
-
-        async function extractTextFromTextFile(file) {
-            const textArea = document.getElementById('course-text');
-            try {
-                const text = await file.text();
-                textArea.value = text.trim();
-                currentText = text.trim();
-            } catch (error) {
-                console.error("Erreur fichier texte :", error);
-                textArea.value = currentText;
-                throw error;
-            }
-        }
-
-        // ========== CHARGEMENT DYNAMIQUE DES BIBLIOTHÈQUES ==========
-        function loadTesseract() {
-            return new Promise((resolve, reject) => {
-                if (window.Tesseract) {
-                    resolve();
-                    return;
-                }
-                const script = document.createElement('script');
-                script.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js';
-                script.onload = resolve;
-                script.onerror = reject;
-                document.head.appendChild(script);
-            });
-        }
-
-        function loadPDFJS() {
-            return new Promise((resolve, reject) => {
-                if (window.pdfjsLib) {
-                    resolve();
-                    return;
-                }
-                const script = document.createElement('script');
-                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js';
-                script.onload = resolve;
-                script.onerror = reject;
-                document.head.appendChild(script);
-            });
-        }
-
-        // ========== FONCTION D'ANALYSE (appel à l'API backend) ==========
-        async function analyzeCourse(text) {
-            const textArea = document.getElementById("course-text");
-            const userText = text || textArea.value.trim();
-
-            if (!userText) {
-                showError("❌ Veuillez coller un texte ou uploader un fichier.");
-                cleanupAnalysis();
-                return;
-            }
-
-            document.getElementById("loading-spinner").style.display = "block";
-            errorMessage.style.display = 'none';
-
-            try {
-                // Appel à l'API backend (Serverless Function)
-                const response = await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        text: userText,
-                        action: 'analyze'
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Erreur API: ${response.statusText}`);
-                }
-
-                const data = await response.json();
-
-                // Afficher les résultats
-                document.getElementById("explanation-result").innerHTML = data.explanation;
-                document.getElementById("summary-result").innerHTML = data.summary;
-                document.getElementById("examples-result").innerHTML = data.examples;
-                document.getElementById("questions-result").innerHTML = data.questions;
-
-                showResultTab('explanation');
-                showError('✅ Analyse terminée ! Consulte les résultats.');
-            } catch (error) {
-                console.error("Erreur d'analyse :", error);
-                showError(`❌ Erreur : ${error.message}. Veuillez réessayer.`);
-            } finally {
-                document.getElementById("loading-spinner").style.display = "none";
-                cleanupAnalysis();
-            }
-        }
-
-        // ========== CHATBOT (appel à l'API backend) ==========
-        async function sendChatMessage() {
-            const input = document.getElementById("chat-input");
-            const message = input.value.trim();
-            if (!message) return;
-
-            const chatMessages = document.getElementById("chat-messages");
-            chatMessages.innerHTML += `<div class="message user-message">${message}</div>`;
-            input.value = "";
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-
-            try {
-                // Appel à l'API backend pour le chatbot
-                const response = await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        text: currentCourseText,
-                        question: message,
-                        action: 'chat'
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Erreur API: ${response.statusText}`);
-                }
-
-                const data = await response.json();
-                chatMessages.innerHTML += `<div class="message bot-message">${data.response}</div>`;
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            } catch (error) {
-                console.error("Erreur chatbot :", error);
-                chatMessages.innerHTML += `<div class="message bot-message">Désolé, une erreur est survenue. Veuillez réessayer.</div>`;
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }
-        }
-
-        // ========== PAYPAL ==========
-        function loadPayPalSDK() {
-            if (window.paypal) return;
-
-            const script = document.createElement('script');
-            script.src = 'https://www.paypal.com/sdk/js?client-id=AYTiTe_Og2PPW3tNvpVw20BpCpGv5SHwAMTNmlUBHlvWP5C4UKDTDfVFqAtmunpLLNR1GG7eczOZvc-H&currency=EUR&intent=capture';
-            script.onload = initPayPalButtons;
-            script.onerror = () => {
-                console.error('❌ Échec du chargement de PayPal SDK');
-                showError('❌ Erreur de chargement du système de paiement.');
-            };
-            document.head.appendChild(script);
-        }
-
-        function initPayPalButtons() {
-            window.paypal.Buttons({
-                style: { layout: 'vertical', color: 'gold', shape: 'rect', label: 'paypal' },
-                createOrder: function(data, actions) {
-                    return actions.order.create({
-                        purchase_units: [{
-                            amount: { value: '8.00', currency_code: 'EUR' },
-                            description: 'Accès illimité à CoursClair - 1 mois'
-                        }]
-                    });
-                },
-                onApprove: function(data, actions) {
-                    return actions.order.capture().then(function(details) {
-                        setPaidUser(30);
-                        showTab('tool');
-                        showError('✅ Paiement réussi ! Accès illimité activé pour 1 mois.');
-                    });
-                },
-                onCancel: function(data) {
-                    showError('⚠️ Paiement annulé.');
-                },
-                onError: function(err) {
-                    console.error("❌ Erreur PayPal :", err);
-                    showError('❌ Erreur de paiement. Veuillez réessayer.');
-                }
-            }).render('#paypal-button-monthly');
-
-            window.paypal.Buttons({
-                style: { layout: 'vertical', color: 'gold', shape: 'rect', label: 'paypal' },
-                createOrder: function(data, actions) {
-                    return actions.order.create({
-                        purchase_units: [{
-                            amount: { value: '60.00', currency_code: 'EUR' },
-                            description: 'Accès illimité à CoursClair - 1 an'
-                        }]
-                    });
-                },
-                onApprove: function(data, actions) {
-                    return actions.order.capture().then(function(details) {
-                        setPaidUser(365);
-                        showTab('tool');
-                        showError('✅ Paiement réussi ! Accès illimité activé pour 1 an.');
-                    });
-                },
-                onCancel: function(data) {
-                    showError('⚠️ Paiement annulé.');
-                },
-                onError: function(err) {
-                    console.error("❌ Erreur PayPal :", err);
-                    showError('❌ Erreur de paiement. Veuillez réessayer.');
-                }
-            }).render('#paypal-button-yearly');
-        }
-    </script>
+        <div class="footer-links">
+            <a onclick="showPage('home')">Accueil</a>
+            <a onclick="showPage('tool')">Outil</a>
+            <a onclick="showPage('pricing')">Tarifs</a>
+            <a onclick="showPage('privacy')">Confidentialité</a>
+            <a onclick="showPage('terms')">CGU</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <span>© 2026 CoursClair. Tous droits réservés.</span>
+        <span>Propulsé par Groq AI · Hébergé sur Vercel</span>
+    </div>
+</footer>
+
+<script>
+let uploadedFiles = [];
+let currentCourseText = '';
+let analysisInProgress = false;
+let analysisTimeout = null;
+
+function showPage(page) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+    document.getElementById('page-' + page)?.classList.add('active');
+    document.getElementById('nav-' + page)?.classList.add('active');
+    window.scrollTo(0, 0);
+    if (page === 'pricing') setTimeout(initPayPal, 300);
+    updateUsageBadge();
+}
+
+function setCookie(name, value, days) {
+    const d = new Date();
+    d.setTime(d.getTime() + days * 86400000);
+    document.cookie = name + '=' + value + ';expires=' + d.toUTCString() + ';path=/';
+}
+
+function getCookie(name) {
+    const v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+    return v ? v[2] : null;
+}
+
+function isPaidUser() {
+    const exp = getCookie('coursclair_paid_until');
+    return exp && new Date(exp) > new Date();
+}
+
+function setPaidUser(days) {
+    const d = new Date();
+    d.setDate(d.getDate() + days);
+    setCookie('coursclair_paid_until', d.toISOString(), days);
+}
+
+function getFreeUses() {
+    const v = getCookie('coursclair_free_uses');
+    return v === null ? 2 : parseInt(v);
+}
+
+function useFreeAnalysis() {
+    setCookie('coursclair_free_uses', Math.max(0, getFreeUses() - 1), 365);
+}
+
+function updateUsageBadge() {
+    const badge = document.getElementById('usage-badge');
+    if (!badge) return;
+    if (isPaidUser()) {
+        badge.textContent = '✦ Accès illimité actif';
+        badge.style.background = 'var(--emerald-pale)';
+        badge.style.color = 'var(--emerald)';
+    } else {
+        const n = getFreeUses();
+        badge.textContent = n + ' analyse' + (n > 1 ? 's' : '') + ' gratuite' + (n > 1 ? 's' : '') + ' restante' + (n > 1 ? 's' : '');
+    }
+}
+
+function showStatus(msg, type = 'info') {
+    const el = document.getElementById('status-msg');
+    el.textContent = msg;
+    el.className = 'status-msg ' + type;
+    el.style.display = 'block';
+}
+
+function hideStatus() { document.getElementById('status-msg').style.display = 'none'; }
+
+const uploadZone = document.getElementById('upload-zone');
+const fileInput = document.getElementById('file-input');
+uploadZone.addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', e => handleFiles(Array.from(e.target.files)));
+uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
+uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
+uploadZone.addEventListener('drop', e => { e.preventDefault(); uploadZone.classList.remove('drag-over'); handleFiles(Array.from(e.dataTransfer.files)); });
+
+function handleFiles(files) {
+    files.forEach(f => { if (!uploadedFiles.find(u => u.name === f.name)) uploadedFiles.push(f); });
+    renderChips();
+}
+
+function renderChips() {
+    document.getElementById('file-chips').innerHTML = uploadedFiles.map((f, i) =>
+        `<div class="file-chip">📄 ${f.name}<span class="file-chip-remove" onclick="removeFile(${i})">×</span></div>`
+    ).join('');
+}
+
+function removeFile(i) { uploadedFiles.splice(i, 1); renderChips(); }
+
+async function startAnalysis() {
+    if (analysisInProgress) return;
+    const textarea = document.getElementById('course-text');
+    const userText = textarea.value.trim();
+    if (!userText && uploadedFiles.length === 0) { showStatus('⚠️ Colle un texte ou uploade un fichier avant d\'analyser.', 'error'); return; }
+    if (!isPaidUser() && getFreeUses() <= 0) { showStatus('Tu as utilisé tes 2 analyses gratuites. Passe à l\'offre illimitée !', 'error'); setTimeout(() => showPage('pricing'), 1500); return; }
+    analysisInProgress = true;
+    document.getElementById('analyze-btn').disabled = true;
+    document.getElementById('cancel-btn').style.display = 'inline-flex';
+    document.getElementById('spinner').style.display = 'block';
+    document.getElementById('results-wrap').style.display = 'none';
+    document.getElementById('chat-wrap').style.display = 'none';
+    setProgress(10); hideStatus();
+    analysisTimeout = setTimeout(() => { cancelAnalysis(); showStatus('⏱ L\'analyse prend trop de temps. Essaie avec un texte plus court.', 'error'); }, 40000);
+    try {
+        let text = userText;
+        if (!text && uploadedFiles.length > 0) { showStatus('Extraction du texte…', 'info'); setProgress(30); text = await extractAllFiles(); textarea.value = text; }
+        if (!text.trim()) { showStatus('Impossible d\'extraire le texte.', 'error'); cleanupAnalysis(); return; }
+        currentCourseText = text;
+        showStatus('Analyse en cours…', 'info'); setProgress(60);
+        if (!isPaidUser()) useFreeAnalysis();
+        const res = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, action: 'analyze' }) });
+        if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error(err.error || 'Erreur serveur'); }
+        const data = await res.json();
+        setProgress(100);
+        document.getElementById('result-explanation').innerHTML = data.explanation || '';
+        document.getElementById('result-summary').innerHTML = data.summary || '';
+        document.getElementById('result-examples').innerHTML = data.examples || '';
+        document.getElementById('result-questions').innerHTML = data.questions || '';
+        showResultTab('explanation');
+        document.getElementById('results-wrap').style.display = 'block';
+        document.getElementById('chat-wrap').style.display = 'block';
+        showStatus('✓ Analyse terminée !', 'success');
+        updateUsageBadge();
+    } catch (err) { showStatus('Erreur : ' + err.message, 'error'); }
+    finally { cleanupAnalysis(); }
+}
+
+function cleanupAnalysis() {
+    clearTimeout(analysisTimeout); analysisInProgress = false;
+    document.getElementById('analyze-btn').disabled = false;
+    document.getElementById('cancel-btn').style.display = 'none';
+    document.getElementById('spinner').style.display = 'none';
+    document.getElementById('progress-wrap').style.display = 'none';
+}
+
+function cancelAnalysis() { if (!analysisInProgress) return; cleanupAnalysis(); showStatus('Analyse annulée.', 'info'); }
+
+function setProgress(pct) { document.getElementById('progress-wrap').style.display = 'block'; document.getElementById('progress-fill').style.width = pct + '%'; }
+
+function showResultTab(tab, btn) {
+    document.querySelectorAll('.rtab-content').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.rtab').forEach(b => b.classList.remove('active'));
+    document.getElementById('rtab-' + tab)?.classList.add('active');
+    if (btn) btn.classList.add('active'); else document.querySelector('.rtab')?.classList.add('active');
+}
+
+async function extractAllFiles() {
+    let combined = '';
+    for (const file of uploadedFiles) { const text = await extractSingleFile(file); combined += (combined ? '\n\n---\n\n' : '') + text; }
+    return combined;
+}
+
+async function extractSingleFile(file) {
+    if (file.type === 'text/plain' || file.name.endsWith('.txt')) return await file.text();
+    else if (file.name.endsWith('.pdf')) return await extractPDF(file);
+    else if (file.type.startsWith('image/')) return await extractImage(file);
+    throw new Error('Type non supporté : ' + file.type);
+}
+
+async function extractPDF(file) {
+    if (!window.pdfjsLib) {
+        await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js');
+        await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js');
+    }
+    window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js';
+    const url = URL.createObjectURL(file);
+    const pdf = await window.pdfjsLib.getDocument({ url, workerSrc: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js' }).promise;
+    let text = '';
+    for (let i = 1; i <= pdf.numPages; i++) { const page = await pdf.getPage(i); const content = await page.getTextContent(); text += content.items.map(item => item.str).join(' ') + '\n'; }
+    URL.revokeObjectURL(url);
+    return text.trim();
+}
+
+async function extractImage(file) {
+    if (!window.Tesseract) await loadScript('https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js');
+    const { data: { text } } = await window.Tesseract.recognize(file, 'fra+eng');
+    return text.trim();
+}
+
+function loadScript(src) {
+    return new Promise((resolve, reject) => { const s = document.createElement('script'); s.src = src; s.onload = resolve; s.onerror = reject; document.head.appendChild(s); });
+}
+
+async function sendChat() {
+    const input = document.getElementById('chat-input');
+    const msg = input.value.trim();
+    if (!msg) return;
+    const messages = document.getElementById('chat-messages');
+    messages.innerHTML += `<div class="msg msg-user">${msg}</div>`;
+    input.value = ''; messages.scrollTop = messages.scrollHeight;
+    try {
+        const res = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: currentCourseText, question: msg, action: 'chat' }) });
+        const data = await res.json();
+        messages.innerHTML += `<div class="msg msg-bot">${data.response || 'Désolé, une erreur est survenue.'}</div>`;
+    } catch { messages.innerHTML += `<div class="msg msg-bot">Désolé, une erreur est survenue.</div>`; }
+    messages.scrollTop = messages.scrollHeight;
+}
+
+let paypalInitialized = false;
+function initPayPal() {
+    if (paypalInitialized || !window.paypal) return;
+    paypalInitialized = true;
+    const createBtn = (containerId, amount, desc, days) => {
+        const el = document.getElementById(containerId);
+        if (!el || el.children.length > 0) return;
+        window.paypal.Buttons({
+            style: { layout: 'vertical', color: 'black', shape: 'rect', label: 'pay' },
+            createOrder: (data, actions) => actions.order.create({ purchase_units: [{ amount: { value: amount, currency_code: 'EUR' }, description: desc }] }),
+            onApprove: (data, actions) => actions.order.capture().then(() => { setPaidUser(days); showPage('tool'); showStatus('✓ Paiement réussi ! Accès illimité activé.', 'success'); }),
+            onCancel: () => {},
+            onError: () => showStatus('Erreur de paiement. Veuillez réessayer.', 'error')
+        }).render('#' + containerId);
+    };
+    createBtn('paypal-button-monthly', '8.00', 'CoursClair — Accès illimité 1 mois', 30);
+    createBtn('paypal-button-yearly', '60.00', 'CoursClair — Accès illimité 1 an', 365);
+}
+
+updateUsageBadge();
+</script>
 </body>
 </html>
